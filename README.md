@@ -15,7 +15,8 @@ JWT_SECRET=yourSuperSecretKeyHere
 Connected to the database successfully."
 
 ## 2. Frontend Steps: ##
-1. cd frontend
-2. npm install
-3. npm run dev
-4. press the url link provided and the website should open 
+1. create another new terminal (keep the backend one open)
+2. cd frontend
+3. npm install
+4. npm run dev
+5. press the url link provided and the website should open 
