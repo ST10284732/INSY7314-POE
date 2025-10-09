@@ -11,7 +11,7 @@ const mongoSanitize = require('mongo-sanitize');
 const createGeneralLimiter = () => {
   return rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
+    max: process.env.NODE_ENV === 'development' ? 500 : 100, // 500 in dev, 100 in production
     message: {
       success: false,
       message: 'Too many requests from this IP, please try again later.',
@@ -41,12 +41,12 @@ const createAuthLimiter = () => {
 // Moderate rate limiting for payment operations
 const createPaymentLimiter = () => {
   return rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 20, // Limit each IP to 20 payment operations per hour
+    windowMs: process.env.NODE_ENV === 'development' ? 15 * 60 * 1000 : 60 * 60 * 1000, // 15 min in dev, 1 hour in prod
+    max: process.env.NODE_ENV === 'development' ? 100 : 20, // 100 in dev, 20 in production
     message: {
       success: false,
       message: 'Payment limit exceeded. Please wait before creating more payments.',
-      retryAfter: '1 hour'
+      retryAfter: process.env.NODE_ENV === 'development' ? '15 minutes' : '1 hour'
     },
     standardHeaders: true,
     legacyHeaders: false,
