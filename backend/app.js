@@ -89,19 +89,37 @@ if (fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath)) {
         if (keyData.includes('-----BEGIN') && certData.includes('-----BEGIN CERTIFICATE-----')) {
             httpsOptions = {
                 key: keyData,
-                cert: certData
+                cert: certData,
+                // Enhanced TLS configuration for better security
+                secureProtocol: 'TLS_method', // Use the most secure available TLS version
+                ciphers: [
+                    'ECDHE-RSA-AES256-GCM-SHA384',
+                    'ECDHE-RSA-AES128-GCM-SHA256',
+                    'ECDHE-RSA-AES256-SHA384',
+                    'ECDHE-RSA-AES128-SHA256',
+                    'AES256-GCM-SHA384',
+                    'AES128-GCM-SHA256'
+                ].join(':'),
+                honorCipherOrder: true,
+                // Minimum TLS version (comment out if causing issues with self-signed certs)
+                secureOptions: process.env.NODE_ENV === 'production' ? 
+                    require('constants').SSL_OP_NO_SSLv2 | 
+                    require('constants').SSL_OP_NO_SSLv3 | 
+                    require('constants').SSL_OP_NO_TLSv1 | 
+                    require('constants').SSL_OP_NO_TLSv1_1 : 
+                    undefined
             };
             sslEnabled = true;
-            console.log('🔒 SSL certificates loaded successfully');
+            console.log('SSL certificates loaded successfully with enhanced TLS configuration');
         } else {
-            console.log('⚠️ SSL certificates found but invalid format - using HTTP only');
+            console.log('SSL certificates found but invalid format - using HTTP only');
         }
     } catch (error) {
-        console.error('❌ Error loading SSL certificates:', error.message);
-        console.log('⚠️ Falling back to HTTP only');
+        console.error('Error loading SSL certificates:', error.message);
+        console.log('Falling back to HTTP only');
     }
 } else {
-    console.log('ℹ️ SSL certificates not found - running HTTP only (development mode)');
+    console.log('SSL certificates not found - running HTTP only (development mode)');
 }
 
 // Start server with enhanced logging
@@ -110,19 +128,19 @@ const httpsPort = process.env.HTTPS_PORT || 3443;
 
 // HTTP Server (for development and fallback)
 const server = app.listen(port, () => {
-    console.log(`🚀 Payment Portal API (HTTP) listening on localhost:${port}`);
-    console.log(`📅 Started at: ${new Date().toISOString()}`);
-    console.log(`🔒 Security: Rate limiting, sanitization, and headers enabled`);
-    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`📋 Health check: http://localhost:${port}/health`);
+    console.log(`Payment Portal API (HTTP) listening on localhost:${port}`);
+    console.log(`Started at: ${new Date().toISOString()}`);
+    console.log(`Security: Rate limiting, sanitization, and headers enabled`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Health check: http://localhost:${port}/health`);
 });
 
 // HTTPS Server (if SSL certificates are available)
 let httpsServer = null;
 if (sslEnabled && Object.keys(httpsOptions).length > 0) {
     httpsServer = https.createServer(httpsOptions, app).listen(httpsPort, () => {
-        console.log(`🔒 Payment Portal API (HTTPS) listening on localhost:${httpsPort}`);
-        console.log(`🔐 Secure Health check: https://localhost:${httpsPort}/health`);
+        console.log(`Payment Portal API (HTTPS) listening on localhost:${httpsPort}`);
+        console.log(`Secure Health check: https://localhost:${httpsPort}/health`);
     });
 }
 

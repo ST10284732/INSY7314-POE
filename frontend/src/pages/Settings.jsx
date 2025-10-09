@@ -10,7 +10,9 @@ export default function Settings() {
   // Settings state with localStorage persistence
   const [settings, setSettings] = useState(() => {
     const savedSettings = localStorage.getItem('bankSettings');
-    return savedSettings ? JSON.parse(savedSettings) : {
+    // Also check for separate theme preference (for persistence across logouts)
+    const savedTheme = localStorage.getItem('bankTheme');
+    const baseSettings = savedSettings ? JSON.parse(savedSettings) : {
       darkMode: false,
       notifications: true,
       emailAlerts: true,
@@ -20,6 +22,13 @@ export default function Settings() {
       currency: 'ZAR',
       language: 'English'
     };
+    
+    // Override with saved theme preference if it exists
+    if (savedTheme) {
+      baseSettings.darkMode = JSON.parse(savedTheme);
+    }
+    
+    return baseSettings;
   });
 
   // Apply dark mode to body
@@ -34,6 +43,8 @@ export default function Settings() {
   // Save settings to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('bankSettings', JSON.stringify(settings));
+    // Also save theme preference separately for persistence across logouts
+    localStorage.setItem('bankTheme', JSON.stringify(settings.darkMode));
   }, [settings]);
 
   const toggleSetting = (settingKey) => {
@@ -71,9 +82,9 @@ export default function Settings() {
               fontSize: 'var(--font-size-2xl)',
               fontWeight: 'var(--font-bold)'
             }}>
-              ⚙️ Account Settings
+              ⚙ Account Settings
             </h1>
-            <p style={{ margin: '4px 0 0 0', color: 'var(--gray-600)' }}>
+            <p style={{ margin: '4px 0 0 0', color: 'var(--text-primary)' }}>
               Manage your banking preferences and security options
             </p>
           </div>
@@ -90,8 +101,8 @@ export default function Settings() {
           {/* Display & Theme Settings */}
           <div className="card">
             <div className="card-header">
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)' }}>
-                🎨 Display & Theme
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
+                ◐ Display & Theme
               </h3>
             </div>
             <div className="card-body">
@@ -109,9 +120,9 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      🌙 Dark Mode
+                      ● Dark Mode
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       {settings.darkMode ? 'Dark theme enabled for low-light viewing' : 'Light theme for standard viewing'}
                     </div>
                   </div>
@@ -166,9 +177,9 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      🌍 Language
+                      ⊕ Language
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Select your preferred language
                     </div>
                   </div>
@@ -197,9 +208,9 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      💰 Default Currency
+                      $ Default Currency
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Primary currency for display
                     </div>
                   </div>
@@ -222,8 +233,8 @@ export default function Settings() {
           {/* Security Settings */}
           <div className="card">
             <div className="card-header">
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)' }}>
-                🔐 Security & Privacy
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
+                ⊞ Security & Privacy
               </h3>
             </div>
             <div className="card-body">
@@ -241,9 +252,9 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      👆 Biometric Login
+                      ⋄ Biometric Login
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       {settings.biometricLogin ? 'Fingerprint/Face ID enabled' : 'Use password authentication only'}
                     </div>
                   </div>
@@ -298,11 +309,16 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      ⏰ Auto Logout
+                      ◷ Auto Logout
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       {settings.autoLogout ? 'Automatic logout after 15 minutes of inactivity' : 'Stay logged in until manual logout'}
                     </div>
+                    {settings.autoLogout && (
+                      <div style={{ fontSize: '12px', color: 'var(--secondary-orange)', marginTop: '4px' }}>
+                        • Warning at 13 minutes • Activity monitoring enabled • Secure session management
+                      </div>
+                    )}
                   </div>
                   <label style={{ 
                     position: 'relative', 
@@ -349,8 +365,8 @@ export default function Settings() {
           {/* Notification Settings */}
           <div className="card">
             <div className="card-header">
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)' }}>
-                🔔 Notifications
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
+                ◉ Notifications
               </h3>
             </div>
             <div className="card-body">
@@ -368,9 +384,9 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      📱 Push Notifications
+                      ◉ Push Notifications
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Receive real-time alerts for account activity
                     </div>
                   </div>
@@ -425,9 +441,9 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      📧 Email Alerts
+                      ✉ Email Alerts
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Receive transaction summaries via email
                     </div>
                   </div>
@@ -482,9 +498,9 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      💬 SMS Alerts
+                      ⊡ SMS Alerts
                     </div>
-                    <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Receive text messages for large transactions
                     </div>
                   </div>
@@ -533,8 +549,8 @@ export default function Settings() {
           {/* Account Summary */}
           <div className="card">
             <div className="card-header">
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)' }}>
-                📊 Settings Summary
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
+                ▤ Settings Summary
               </h3>
             </div>
             <div className="card-body">
@@ -544,7 +560,7 @@ export default function Settings() {
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--border-light)'
               }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)', fontSize: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)', fontSize: '14px', color: 'var(--text-primary)' }}>
                   <div><strong>Theme:</strong> {settings.darkMode ? 'Dark Mode' : 'Light Mode'}</div>
                   <div><strong>Language:</strong> {settings.language}</div>
                   <div><strong>Currency:</strong> {settings.currency}</div>
