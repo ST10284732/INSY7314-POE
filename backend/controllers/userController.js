@@ -42,9 +42,8 @@ const registerValidation = [
         .withMessage('ID number must be 8-20 alphanumeric characters'),
     body('accountNumber')
         .trim()
-        .isLength({ min: 8, max: 15 })
-        .matches(/^[0-9]+$/)
-        .withMessage('Account number must be 8-15 digits'),
+        .matches(/^ACC\d{6,10}$/)
+        .withMessage('Account number must start with ACC followed by 6-10 digits'),
     body('username')
         .trim()
         .isLength({ min: 3, max: 30 })
