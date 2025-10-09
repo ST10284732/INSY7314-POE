@@ -1,269 +1,292 @@
-// importing required react components
-import { useEffect, useState } from "react";
-// as well as our API methods we created
-import {
-  getAllBooks,
-  getBookById,
-  createBook,
-  updateBook,
-  deleteBook,
-} from "../services/apiService.js";
+﻿import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
+import '../styles/modern-banking.css';
 
-// every page needs to return a default function, so that it can be called elsewhere
 export default function Dashboard() {
-  const [books, setBooks] = useState([]);
-  const [selectedBookId, setSelectedBookId] = useState("");
-  // this formData is for CREATING A NEW BOOK
-  const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    isbn: "",
-    edition: 0,
-  });
-  // this form data is for UPDATING AN EXISTING BOOK
-  const [updateData, setUpdateData] = useState({
-    title: "",
-    author: "",
-    isbn: "",
-    edition: 0,
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Mock user data - in a real app, this would come from your backend
+  const [accountData] = useState({
+    balance: 12547.83,
+    accountNumber: 'ACC987654321',
+    accountType: 'Premium Checking',
+    availableCredit: 5000.00,
+    recentTransactions: [
+      { id: 1, description: 'Salary Deposit', amount: 3500.00, date: '2025-10-07', type: 'credit' },
+      { id: 2, description: 'Online Purchase', amount: -89.99, date: '2025-10-06', type: 'debit' },
+      { id: 3, description: 'ATM Withdrawal', amount: -200.00, date: '2025-10-05', type: 'debit' },
+      { id: 4, description: 'Transfer In', amount: 750.00, date: '2025-10-04', type: 'credit' },
+      { id: 5, description: 'Utility Payment', amount: -156.32, date: '2025-10-03', type: 'debit' },
+    ]
   });
 
-  const fetchBooks = async () => {
-    // fetch all books using the apiService method we created earlier, storing the response in a temp variable
-    const res = await getAllBooks();
-    // and update our books variable with the response data
-    setBooks(res.data);
-  };
-
-  // this method will run as soon as the page is loaded
   useEffect(() => {
-    // fetching all of the books in the background
-    fetchBooks();
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
   }, []);
 
-  // we create a method to handle when the delete button is pressed
-  const handleDelete = async (id) => {
-    // prompt the user to make sure that they're sure that they're sure they want to delete
-    if (
-      window.confirm(
-        "Are you super duper mega sure you want to nuke this book from the face of the earth?"
-      )
-    ) {
-      // if yes, delete the book using the provided id
-      await deleteBook(id);
-      // and update our cached books array
-      fetchBooks();
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
-  // this method will handle what to do when user input happens in our form element
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-ZA', {
+      style: 'currency',
+      currency: 'ZAR'
+    }).format(amount);
   };
 
-  // same method, different variable
-    const handleUpdateInputChange = (e) => {
-    setUpdateData({ ...updateData, [e.target.name]: e.target.value });
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-ZA', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
-
-  // this method handles what happens when the submit button is pressed
-  const handleSubmit = async (e) => {
-    // prevent the button from being pressed automatically when it is created by React
-    e.preventDefault();
-    // call our wonderful API method to create a new book
-    await createBook(formData);
-    // let the user know if it was successful
-    alert("Book created!");
-    // and reset the form
-    setFormData({ title: "", author: "", isbn: "", edition: 0 });
-    // refresh our local list of books
-    fetchBooks();
-  };
-
-  // when the reset button is clicked, clear
-  const handleReset = () => {
-    setFormData({ title: "", author: "", isbn: "", edition: 0 });
-  };
-
-  // handle what to do when a new item is selected from the select list
-  const handleSelectItem = async (e) => {
-    // get the .value from the select list option that was chosen
-    const _id = e.target.value;
-    // update our variable keeping track of the selected book
-    setSelectedBookId(_id);
-    // if working with a REAL book (and not the placeholder), do the following...
-    if (_id) {
-      // ... get the book from the API using the provided _id
-      const res = await getBookById(_id);
-      setUpdateData(res.data);
-    } else {
-      setUpdateData({ title: "", author: "", isbn: "", edition: 0 });
-    }
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    await updateBook(selectedBookId, updateData);
-    alert('Book updated!')
-    fetchBooks();
-  }
 
   return (
-    <div>
-      <h1>📚Library Dashboard Page📚</h1>
-      <div>
-        <h3>ALL books</h3>
-        <table border="1">
-          {/* thead specifies that the following row will be headings */}
-          <thead>
-            {/* tr denotes a new row */}
-            <tr>
-              {/* and each th represents a heading */}
-              <th>Title</th>
-              <th>Author</th>
-              <th>ISBN</th>
-              <th>Edition</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          {/* tbody - table body (data lives here) */}
-          <tbody>
-            {/* if there are NO books, print a message across the table saying so */}
-            {books.length === 0 && (
-              <tr>
-                <td colSpan="5">No books available.</td>
-              </tr>
-            )}
-            {/* if there ARE books, we iterate through each book in the books array (using temp variable book) 
-            similar to a foreach loop, and we map the correct attribute to the correct column in the table */}
-            {books.map((book) => (
-              /* key lets us identify each row (by the books id, useful for when we implement DELETE later) */
-              <tr key={book._id}>
-                <td>{book.title}</td>
-                <td>{book.author}</td>
-                <td>{book.isbn}</td>
-                <td>{book.edition}</td>
-                <td>
-                  <button
-                    onClick={() => {
-                      handleDelete(book._id);
-                    }}
-                  >
-                    Delete Book
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <h3>✏️Add a New Book✏️</h3>
-        {/* a FORM element allows us to collect multiple pieces of information about the same thing */}
-        <form onSubmit={handleSubmit}>
-          {/* we use the INPUT element to gather input */}
-          <input
-            type="text"
-            name="title"
-            placeholder="Book Title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-          />
-          <br />
-          <input
-            type="text"
-            name="author"
-            placeholder="Book Author"
-            value={formData.author}
-            onChange={handleInputChange}
-            required
-          />
-          <br />
-          <input
-            type="text"
-            name="isbn"
-            placeholder="Book ISBN"
-            value={formData.isbn}
-            onChange={handleInputChange}
-            required
-          />
-          <br />
-          <input
-            type="number"
-            name="edition"
-            placeholder="Book Edition"
-            value={formData.edition}
-            onChange={handleInputChange}
-            required
-          />
-          <br />
-          <button type="submit">Submit</button>
-          <button type="reset" onClick={handleReset}>
-            Reset
-          </button>
-        </form>
-      </div>
-      <div>
-        <h3>📒Work with a Single Book📒</h3>
-        <label>Select Which Book You'd Like to Work With:</label>
-        <br />
-        <select value={selectedBookId} onChange={handleSelectItem}>
-          {/* we create a default select list option for when a book has not yet been chosen */}
-          <option value="">--Select Book--</option>
-          {/* here, we iterate through each book in our list, to create a new select list option */}
-          {books.map((book) => (
-            /* we use the _id to reference a book (in the API), but the title for the user to select 
-                as the user will know the title of the book they want, not the _id */
-            <option key={book._id} value={book._id}>
-              {book.title}
-            </option>
-          ))}
-        </select>
-        <br />
-        <form onSubmit={handleUpdate}>
-          {/* we use the INPUT element to gather input */}
-          <input
-            type="text"
-            name="title"
-            placeholder="Book Title"
-            value={updateData.title}
-            onChange={handleUpdateInputChange}
-            required
-          />
-          <br />
-          <input
-            type="text"
-            name="author"
-            placeholder="Book Author"
-            value={updateData.author}
-            onChange={handleUpdateInputChange}
-            required
-          />
-          <br />
-          <input
-            type="text"
-            name="isbn"
-            placeholder="Book ISBN"
-            value={updateData.isbn}
-            onChange={handleUpdateInputChange}
-            required
-          />
-          <br />
-          <input
-            type="number"
-            name="edition"
-            placeholder="Book Edition"
-            value={updateData.edition}
-            onChange={handleUpdateInputChange}
-            required
-          />
-          <br />
-          <button type="submit">Update Book</button>
-          <button type="reset" onClick={handleReset}>
-            Reset
-          </button>
-        </form>
+    <div style={{ background: 'var(--bg-secondary)', minHeight: '100vh', padding: 'var(--space-4)' }}>
+      {/* Header */}
+      <div className="container">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 'var(--space-8)',
+          padding: 'var(--space-6)',
+          background: 'var(--bg-primary)',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'var(--shadow-sm)'
+        }}>
+          <div>
+            <h1 style={{ 
+              margin: 0, 
+              color: 'var(--primary-blue)',
+              fontSize: 'var(--font-size-3xl)',
+              fontWeight: 'var(--font-bold)'
+            }}>
+              SecureBank
+            </h1>
+            <p style={{ margin: '4px 0 0 0', color: 'var(--text-secondary)' }}>
+              Welcome back! {currentTime.toLocaleTimeString()}
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center' }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Good evening</div>
+              <div style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)' }}>
+                {user?.username || 'Valued Customer'}
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="btn btn-secondary"
+              style={{ fontSize: '14px' }}
+            >
+              ← Sign Out
+            </button>
+          </div>
+        </div>
+
+        {/* Account Overview Cards */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 'var(--space-6)',
+          marginBottom: 'var(--space-8)'
+        }}>
+          {/* Primary Account Card */}
+          <div className="card" style={{ background: 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%)', color: 'white' }}>
+            <div className="card-body">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: 'var(--space-2)' }}>
+                    {accountData.accountType}
+                  </div>
+                  <div style={{ fontSize: '32px', fontWeight: 'var(--font-bold)', marginBottom: 'var(--space-2)' }}>
+                    {formatCurrency(accountData.balance)}
+                  </div>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Account: {accountData.accountNumber}
+                  </div>
+                </div>
+                <div style={{ fontSize: '32px', color: 'rgba(255,255,255,0.8)' }}>⬜</div>
+              </div>
+              <div style={{ 
+                marginTop: 'var(--space-6)',
+                display: 'flex',
+                gap: 'var(--space-4)'
+              }}>
+                <button className="btn" style={{ 
+                  background: 'rgba(255,255,255,0.2)', 
+                  color: 'white',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  fontSize: '14px'
+                }}>
+                  Transfer
+                </button>
+                <button className="btn" style={{ 
+                  background: 'rgba(255,255,255,0.2)', 
+                  color: 'white',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  fontSize: '14px'
+                }}>
+                  ⦚ Statement
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="card">
+            <div className="card-header">
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>Quick Actions</h3>
+            </div>
+            <div className="card-body">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ flexDirection: 'column', height: '80px' }}
+                  onClick={() => navigate('/create-payment')}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>↗</div>
+                  <div style={{ fontSize: '12px' }}>Create Payment</div>
+                </button>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ flexDirection: 'column', height: '80px' }}
+                  onClick={() => navigate('/payments')}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⦁⦁⦁</div>
+                  <div style={{ fontSize: '12px' }}>Payment History</div>
+                </button>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ flexDirection: 'column', height: '80px' }}
+                  onClick={() => navigate('/mfa-setup')}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⊞</div>
+                  <div style={{ fontSize: '12px' }}>Security & MFA</div>
+                </button>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ flexDirection: 'column', height: '80px' }}
+                  onClick={() => navigate('/settings')}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⚙</div>
+                  <div style={{ fontSize: '12px' }}>Settings</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Available Credit */}
+          <div className="card">
+            <div className="card-body">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
+                <div style={{ fontSize: '32px' }}>⬜</div>
+                <div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Available Credit</div>
+                  <div style={{ fontSize: '24px', fontWeight: 'var(--font-semibold)', color: 'var(--secondary-green)' }}>
+                    {formatCurrency(accountData.availableCredit)}
+                  </div>
+                </div>
+              </div>
+              <div style={{ 
+                height: '8px', 
+                background: 'var(--gray-200)', 
+                borderRadius: '4px',
+                marginBottom: 'var(--space-3)'
+              }}>
+                <div style={{
+                  height: '100%',
+                  width: '75%',
+                  background: 'linear-gradient(90deg, var(--secondary-green), #20c997)',
+                  borderRadius: '4px'
+                }}></div>
+              </div>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
+                75% available
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="card">
+          <div className="card-header">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>Recent Transactions</h3>
+              <button className="btn btn-link">View All</button>
+            </div>
+          </div>
+          <div className="card-body" style={{ padding: 0 }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'left', color: 'var(--text-primary)', fontSize: '14px' }}>
+                      Description
+                    </th>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'left', color: 'var(--text-primary)', fontSize: '14px' }}>
+                      Date
+                    </th>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'right', color: 'var(--text-primary)', fontSize: '14px' }}>
+                      Amount
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {accountData.recentTransactions.map((transaction) => (
+                    <tr key={transaction.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                      <td style={{ padding: 'var(--space-4)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                          <div style={{ 
+                            fontSize: '18px',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: 'var(--radius-full)',
+                            background: transaction.type === 'credit' ? '#22c55e' : '#ef4444',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 'bold',
+                            lineHeight: '1',
+                            textAlign: 'center'
+                          }}>
+                            {transaction.type === 'credit' ? '+' : '−'}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 'var(--font-medium)' }}>{transaction.description}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                              {transaction.type === 'credit' ? 'Credit' : 'Debit'}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ padding: 'var(--space-4)', color: 'var(--text-secondary)' }}>
+                        {formatDate(transaction.date)}
+                      </td>
+                      <td style={{ 
+                        padding: 'var(--space-4)', 
+                        textAlign: 'right',
+                        fontWeight: 'var(--font-semibold)',
+                        color: transaction.type === 'credit' ? 'var(--secondary-green)' : 'var(--secondary-red)'
+                      }}>
+                        {transaction.type === 'credit' ? '+' : ''}{formatCurrency(transaction.amount)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

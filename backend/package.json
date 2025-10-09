@@ -8,15 +8,24 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "| App      | Link (Windows) |\r |-----------|-----|\r | Node.js | https://nodejs.org/en/download |\r | Visual Studio Code | https://code.visualstudio.com/Download |\r | Git | https://git-scm.com/downloads |\r | Postman | https://www.postman.com/downloads/ |",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.17.1",
-    "nodemon": "^3.1.10"
+    "mongo-sanitize": "^1.1.0",
+    "mongoose": "^8.19.1",
+    "nodemon": "^3.1.10",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "selfsigned": "^3.0.1"
   }
 }

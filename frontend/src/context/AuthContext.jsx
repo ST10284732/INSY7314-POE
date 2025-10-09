@@ -1,30 +1,72 @@
-// we need the required imports first
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react';
 
-// first we create our little section of memory for remembering if we're logged in
 const AuthContext = createContext();
 
-export function AuthProvider({children}) {
-    // variable to hold whether authenticated, and a corresponding setter method
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+export function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
-    // here we create methods to handle various auth functions
-    // for now, all they do is updated our auth state, in the real world they'd handle
-    // actual auth.
-    const login = () => setIsAuthenticated(true);
-    const logout = () => setIsAuthenticated(false);
+  // Check localStorage on mount
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      setToken(savedToken);
+      setIsAuthenticated(true);
+      // Decode user info from token if needed
+      try {
+        const payload = JSON.parse(atob(savedToken.split('.')[1]));
+        setUser({ userId: payload.userId, username: payload.username });
+      } catch (err) {
+        console.error('Invalid token format');
+        logout();
+      }
+    }
+  }, []);
 
-    return (
-        /* here we are providing information from this context file to the rest of the app
-        so that we can check auth status anywhere, as well as handle the login/logout functions
-        on the corresponding pages */
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-            {/* display any of the children */}
-            {children}
-        </AuthContext.Provider>
-    );
-};
+  // Login method (save token & set auth state)
+  const login = (newToken) => {
+    if (!newToken || typeof newToken !== 'string') {
+      console.error('Invalid token provided to login function:', newToken);
+      return;
+    }
+    
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
+    setIsAuthenticated(true);
+    
+    // Decode and set user info
+    try {
+      if (newToken.split('.').length !== 3) {
+        throw new Error('JWT must have 3 parts');
+      }
+      const payload = JSON.parse(atob(newToken.split('.')[1]));
+      setUser({ userId: payload.userId, username: payload.username });
+    } catch (err) {
+      console.error('Invalid token format:', err.message, 'Token:', newToken);
+    }
+  };
 
-// setting it up so whenever we call useAuth(), it will use our AuthContext file
-// this also allows us to call all these different methods and variables in different files
+  // Logout method
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setIsAuthenticated(false);
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ 
+      isAuthenticated, 
+      user, 
+      token,
+      login, 
+      logout 
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+// Custom hook for easy usage
 export const useAuth = () => useContext(AuthContext);
