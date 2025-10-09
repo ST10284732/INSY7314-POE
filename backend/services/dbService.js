@@ -8,11 +8,7 @@ require('dotenv').config()
 const connectToMongo = async () => {
     try {
         // creating a new connection to the mongo db we will be using
-        await mongoose.connect(process.env.CONN_STRING, {
-            // because we are using mongo atlas (online), these options are required
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
+        await mongoose.connect(process.env.CONN_STRING);
         console.log("Connected to the database successfully.")
     } catch (err) {
         // if unable to connect to the database, log out an error message and kill the app.

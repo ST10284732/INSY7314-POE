@@ -4,10 +4,13 @@ const { invalidateToken } = require('../middlewares/authMiddleware.js');
 const User = require('../models/userModel.js');
 require('dotenv').config();
 
-// helper method to generate our tokens, that takes in the username
-const generateJwt = (username) => {
+// helper method to generate our tokens, that takes in user data
+const generateJwt = (user) => {
     // signs it using our secret (that it pulls from .env)
-    return jwt.sign({username}, process.env.JWT_SECRET, {
+    return jwt.sign({
+        userId: user._id,
+        username: user.username
+    }, process.env.JWT_SECRET, {
         // set an expiry of 1 hour from signing
         expiresIn: "1h",
     });
@@ -22,26 +25,44 @@ const register = async (req, res) => {
     // if it is, say no
     if (exists) return res.status(400).json({message: "User already exists."});
     // if not, lets hash their password (by providing their password, and the number of random iterations to salt)
-    const hashedPassword = bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     try {
-        User.create({username: username, password: hashedPassword});
-        res.status(200).json({token: generateJwt(username)});
+        const newUser = await User.create({username: username, password: hashedPassword});
+        res.status(200).json({token: generateJwt(newUser)});
     } catch (e) {
         res.status(500).json({error: e.message});
     }
 };
 
 const login = async (req, res) => {
-    const { username, password } = req.body;
-    const exists = await User.findOne({username: username})
+    const { username, password, accountNumber } = req.body;
+    
+    // Find user by username and account number for enhanced security
+    const exists = await User.findOne({
+        username: username,
+        accountNumber: accountNumber
+    });
+    
     // if the user is not present in our collection, let them know to try again
-    if (!exists) return res.status(400).json({message: "Invalid credentials."});
+    if (!exists) return res.status(401).json({message: "Invalid credentials."});
+    
     // next, if the user DOES exist, we compare their entered password to what we have on file
     const matching = await bcrypt.compare(password, exists.password);
     // if they don't match, say no
-    if (!matching) return res.status(400).json({message: "Invalid credentials."});
+    if (!matching) return res.status(401).json({message: "Invalid credentials."});
+    
+    // Check if MFA is enabled for this user
+    if (exists.mfaEnabled && exists.mfaSetupComplete) {
+        // Return indication that MFA is required
+        return res.status(200).json({
+            requiresMFA: true,
+            username: exists.username,
+            message: "MFA verification required"
+        });
+    }
+    
     // otherwise, generate a token and log them in
-    res.status(200).json({token: generateJwt(username)});
+    res.status(200).json({token: generateJwt(exists)});
 };
 
 const logout = async (req, res) => {
