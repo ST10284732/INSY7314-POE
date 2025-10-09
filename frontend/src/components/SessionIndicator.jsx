@@ -70,7 +70,7 @@ export default function SessionIndicator() {
       borderRadius: 'var(--radius-md)',
       padding: '12px 16px',
       fontSize: '12px',
-      color: isWarning ? 'white' : 'var(--gray-600)',
+      color: isWarning ? 'white' : 'var(--text-primary)',
       boxShadow: 'var(--shadow-sm)',
       zIndex: 1000,
       display: 'flex',
@@ -86,7 +86,7 @@ export default function SessionIndicator() {
         animation: isWarning ? 'none' : 'pulse 2s infinite'
       }}></div>
       <span>
-        {isWarning ? `⚠️ ${minutesRemaining} min remaining` : 'Auto-logout: Active'}
+        {isWarning ? `⚠ ${minutesRemaining} min remaining` : 'Auto-logout: Active'}
       </span>
       
       <style>{`
