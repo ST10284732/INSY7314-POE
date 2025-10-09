@@ -314,6 +314,11 @@ export default function Settings() {
                     <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
                       {settings.autoLogout ? 'Automatic logout after 15 minutes of inactivity' : 'Stay logged in until manual logout'}
                     </div>
+                    {settings.autoLogout && (
+                      <div style={{ fontSize: '12px', color: 'var(--secondary-orange)', marginTop: '4px' }}>
+                        • Warning at 13 minutes • Activity monitoring enabled • Secure session management
+                      </div>
+                    )}
                   </div>
                   <label style={{ 
                     position: 'relative', 
