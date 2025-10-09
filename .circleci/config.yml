@@ -30,7 +30,7 @@ jobs:
     steps:
       - run: find .
       - attach_workspace:
-        at: ~/workspace
+          at: ~/workspace
       - run: |
           SONAR_BRANCH="${CIRCLE_BRANCH:-main}"
           echo "Sonar branch value is: " $SONAR_BRANCH
