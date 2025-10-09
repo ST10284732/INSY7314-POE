@@ -1,22 +1,51 @@
-# Steps to follow when running the program #
-## 1. Backend Steps: ##
+## ✅ What’s Done
 
-1. Create a new terminal
-2. cd backend
-3. npm install
-4. Inside the backend folder created a new file named '.env'
-4.1 Inside .env file add the following content:
-PORT = 3000
-CONN_STRING = (Your mongodb database connection string here)
-JWT_SECRET=yourSuperSecretKeyHere
-5. nodemon app.js
-6. You should see somthing along the lines of: 
-"API listening on port 3000
-Connected to the database successfully."
+### 🧩 Backend (Node.js + Express)
 
-## 2. Frontend Steps: ##
-1. create another new terminal (keep the backend one open)
-2. cd frontend
-3. npm install
-4. npm run dev
-5. press the url link provided and the website should open 
+- **Authentication System**
+  - User registration, login, and logout using **JWT**  
+  - **Password hashing** with bcrypt for secure storage  
+  - **Multi-Factor Authentication (MFA)** implemented with **TOTP** and **backup codes**
+
+- **Payment Features**
+  - Endpoints for creating payments and viewing payment history  
+  - Payments are automatically initialized with a **“pending”** status  
+
+- **Security Enhancements**
+  - Input validation on all routes  
+  - **Rate limiting** to prevent brute-force and DDoS attacks  
+  - **CORS** properly configured  
+  - Secure **MongoDB** database connection  
+  - Full **HTTPS** support (HTTP on port 3000, HTTPS on port 3443)
+
+---
+
+### 💻 Frontend (React)
+
+- **User Interface**
+  - Professional, **banking-style dashboard**
+  - Complete **login** and **registration** forms with validation  
+  - **Payment creation form** including all required fields:
+    - Amount, currency, provider, recipient details, SWIFT codes  
+  - **Payment history page** to view previous transactions  
+  - **Settings page** with a **dark mode toggle**  
+
+- **User Experience**
+  - Secure **protected routes** and authenticated navigation  
+  - All API requests made **exclusively over HTTPS**
+
+---
+
+### 🔒 Security Implementation
+
+- **Session Management**
+  - **15-minute session timeout** with proper logout invalidation  
+
+- **Multi-Factor Authentication**
+  - Fully functional MFA using **TOTP** and **recovery codes**
+
+- **Data Protection**
+  - Comprehensive input validation on **both frontend and backend**  
+  - **TLS/HTTPS** encryption for all network communication  
+  - **Rate limiting** applied to sensitive endpoints  
+  - Protection against **SQL/NoSQL injection** attacks  
