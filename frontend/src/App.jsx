@@ -3,18 +3,28 @@ import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import CreatePayment from './pages/CreatePayment.jsx';
+import PaymentsList from './pages/PaymentsList.jsx';
+import MFASetup from './pages/MFASetup.jsx';
+import Settings from './pages/Settings.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import './styles/modern-banking.css';
 
 function App() {
   return (
-    <Router>
+    <Router 
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected route */}
+        {/* Protected routes */}
         <Route
           path="/dashboard"
           element={
@@ -23,6 +33,39 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/create-payment"
+          element={
+            <ProtectedRoute>
+              <CreatePayment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payments"
+          element={
+            <ProtectedRoute>
+              <PaymentsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mfa-setup"
+          element={
+            <ProtectedRoute>
+              <MFASetup />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </Router>
   );
