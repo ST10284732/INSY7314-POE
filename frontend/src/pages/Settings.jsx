@@ -10,7 +10,9 @@ export default function Settings() {
   // Settings state with localStorage persistence
   const [settings, setSettings] = useState(() => {
     const savedSettings = localStorage.getItem('bankSettings');
-    return savedSettings ? JSON.parse(savedSettings) : {
+    // Also check for separate theme preference (for persistence across logouts)
+    const savedTheme = localStorage.getItem('bankTheme');
+    const baseSettings = savedSettings ? JSON.parse(savedSettings) : {
       darkMode: false,
       notifications: true,
       emailAlerts: true,
@@ -20,6 +22,13 @@ export default function Settings() {
       currency: 'ZAR',
       language: 'English'
     };
+    
+    // Override with saved theme preference if it exists
+    if (savedTheme) {
+      baseSettings.darkMode = JSON.parse(savedTheme);
+    }
+    
+    return baseSettings;
   });
 
   // Apply dark mode to body
@@ -34,6 +43,8 @@ export default function Settings() {
   // Save settings to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('bankSettings', JSON.stringify(settings));
+    // Also save theme preference separately for persistence across logouts
+    localStorage.setItem('bankTheme', JSON.stringify(settings.darkMode));
   }, [settings]);
 
   const toggleSetting = (settingKey) => {
