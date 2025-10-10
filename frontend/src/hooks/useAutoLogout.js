@@ -31,7 +31,7 @@ export const useAutoLogout = (isEnabled = true, timeoutMinutes = 15) => {
       if (!isEnabled || !isAuthenticated) return;
 
       const shouldContinue = window.confirm(
-        '⚠️ Session Timeout Warning\n\n' +
+        '⚠ Session Timeout Warning\n\n' +
         'You will be automatically logged out in 2 minutes due to inactivity.\n' +
         'Click OK to continue your session, or Cancel to logout now.'
       );
@@ -57,7 +57,7 @@ export const useAutoLogout = (isEnabled = true, timeoutMinutes = 15) => {
     }
 
     // Show logout notification
-    alert('🔒 Session Expired\n\nYou have been automatically logged out due to 15 minutes of inactivity.');
+    alert('⊞ Session Expired\n\nYou have been automatically logged out due to 15 minutes of inactivity.');
     
     logout();
   }, [logout]);

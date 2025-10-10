@@ -165,7 +165,7 @@ export default function PaymentsList() {
         }}>
           <div>
             <h1 style={{ margin: 0, color: 'var(--primary-blue)' }}>Payment History</h1>
-            <p style={{ margin: '4px 0 0 0', color: 'var(--gray-600)' }}>
+            <p style={{ margin: '4px 0 0 0', color: 'var(--text-primary)' }}>
               Manage and track your international payments
             </p>
           </div>
@@ -190,7 +190,7 @@ export default function PaymentsList() {
                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--primary-blue)' }}>
                   {stats.totalPayments}
                 </div>
-                <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>Total Payments</div>
+                <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Total Payments</div>
               </div>
             </div>
             <div className="card">
@@ -198,7 +198,7 @@ export default function PaymentsList() {
                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--secondary-green)' }}>
                   {stats.pendingPayments}
                 </div>
-                <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>Pending</div>
+                <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Pending</div>
               </div>
             </div>
             <div className="card">
@@ -206,7 +206,7 @@ export default function PaymentsList() {
                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--secondary-green)' }}>
                   {stats.completedPayments}
                 </div>
-                <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>Completed</div>
+                <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Completed</div>
               </div>
             </div>
             <div className="card">
@@ -214,7 +214,7 @@ export default function PaymentsList() {
                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--secondary-red)' }}>
                   {stats.failedPayments}
                 </div>
-                <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>Failed</div>
+                <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Failed</div>
               </div>
             </div>
           </div>
@@ -244,7 +244,7 @@ export default function PaymentsList() {
         {/* Payments Table */}
         <div className="card">
           <div className="card-header">
-            <h3 style={{ margin: 0 }}>
+            <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>
               Payments ({totalPayments} {totalPayments === 1 ? 'payment' : 'payments'})
             </h3>
           </div>
@@ -260,7 +260,7 @@ export default function PaymentsList() {
                 {error}
               </div>
             ) : payments.length === 0 ? (
-              <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--gray-600)' }}>
+              <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--text-primary)' }}>
                 No payments found. 
                 <button 
                   className="btn-link" 
@@ -275,12 +275,12 @@ export default function PaymentsList() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ borderBottom: '2px solid var(--border-light)' }}>
-                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--gray-600)', textTransform: 'uppercase' }}>Payment ID</th>
-                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--gray-600)', textTransform: 'uppercase' }}>Recipient</th>
-                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--gray-600)', textTransform: 'uppercase' }}>Amount</th>
-                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--gray-600)', textTransform: 'uppercase' }}>Status</th>
-                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--gray-600)', textTransform: 'uppercase' }}>Date</th>
-                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--gray-600)', textTransform: 'uppercase' }}>Provider</th>
+                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Payment ID</th>
+                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Recipient</th>
+                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Amount</th>
+                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Status</th>
+                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Date</th>
+                      <th style={{ padding: 'var(--space-4)', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Provider</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -299,7 +299,7 @@ export default function PaymentsList() {
                         </td>
                         <td style={{ padding: 'var(--space-4)' }}>
                           <div style={{ fontWeight: '500' }}>{payment.recipientName}</div>
-                          <div style={{ fontSize: '12px', color: 'var(--gray-600)' }}>
+                          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                             {payment.recipientBank}
                           </div>
                         </td>
@@ -317,7 +317,15 @@ export default function PaymentsList() {
                           </div>
                         </td>
                         <td style={{ padding: 'var(--space-4)' }}>
-                          <div style={{ fontSize: '12px', padding: '2px 6px', background: 'var(--gray-100)', borderRadius: '4px', display: 'inline-block' }}>
+                          <div style={{ 
+                            fontSize: '12px', 
+                            padding: '2px 6px', 
+                            background: 'var(--gray-200)', 
+                            color: 'var(--gray-800)', 
+                            borderRadius: '4px', 
+                            display: 'inline-block',
+                            border: '1px solid var(--border-light)'
+                          }}>
                             {payment.provider}
                           </div>
                         </td>
@@ -333,7 +341,7 @@ export default function PaymentsList() {
           {totalPages > 1 && (
             <div className="card-footer">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
                   Page {currentPage} of {totalPages} • {totalPayments} total payments
                 </div>
                 <div style={{ display: 'flex', gap: 'var(--space-2)' }}>

@@ -163,20 +163,45 @@ const securityMiddlewares = (app) => {
     app.use(helmet({
         contentSecurityPolicy: {
             directives: {
-                // Enhanced CSP directives for better security
+                // Enhanced CSP directives optimized for React/Vite development and security
                 'default-src': ["'self'"],
-                'script-src': ["'self'"],
-                'style-src': ["'self'", "'unsafe-inline'"], // Allow inline styles for React
-                'img-src': ["'self'", "data:", "https:"],
-                'connect-src': ["'self'"],
-                'font-src': ["'self'"],
+                'script-src': [
+                    "'self'",
+                    // Allow eval for development builds (Vite HMR)
+                    process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : "",
+                    // Allow inline scripts with nonce for React
+                    process.env.NODE_ENV === 'development' ? "'unsafe-inline'" : ""
+                ].filter(Boolean),
+                'style-src': [
+                    "'self'", 
+                    "'unsafe-inline'", // Required for React and CSS-in-JS
+                    "https://fonts.googleapis.com"
+                ],
+                'img-src': ["'self'", "data:", "https:", "blob:"],
+                'connect-src': [
+                    "'self'",
+                    // Allow WebSocket connections for Vite HMR in development
+                    process.env.NODE_ENV === 'development' ? "ws://localhost:*" : "",
+                    process.env.NODE_ENV === 'development' ? "wss://localhost:*" : "",
+                    "https://api.qrserver.com" // For QR code generation
+                ].filter(Boolean),
+                'font-src': [
+                    "'self'", 
+                    "https://fonts.gstatic.com",
+                    "data:"
+                ],
                 'object-src': ["'none'"],
                 'media-src': ["'self'"],
                 'frame-src': ["'none'"],
-                'frame-ancestors': ["'none'"], // Prevent embedding in iframes
+                'frame-ancestors': ["'none'"], // Prevent embedding in iframes (clickjacking protection)
                 'base-uri': ["'self'"],
                 'form-action': ["'self'"],
-            }
+                'manifest-src': ["'self'"],
+                'worker-src': ["'self'", "blob:"],
+                'child-src': ["'none'"]
+            },
+            // Report violations in development
+            reportOnly: process.env.NODE_ENV === 'development'
         },
         // Hide server information
         hidePoweredBy: true,
@@ -186,11 +211,13 @@ const securityMiddlewares = (app) => {
             action: 'deny'
         },
         
-        // Enable HSTS (HTTP Strict Transport Security)
+        // Enable HSTS (HTTP Strict Transport Security) with enhanced configuration
         hsts: {
-            maxAge: 31536000, // 1 year
+            maxAge: process.env.NODE_ENV === 'production' ? 63072000 : 31536000, // 2 years in prod, 1 year in dev
             includeSubDomains: true,
-            preload: true
+            preload: process.env.NODE_ENV === 'production', // Only enable preload in production
+            // Force HTTPS in production, optional in development
+            force: process.env.NODE_ENV === 'production'
         },
         
         // Prevent MIME type sniffing
@@ -216,17 +243,34 @@ const securityMiddlewares = (app) => {
     // Apply CORS middleware
     app.use(cors(corsOptions));
     
-    // Set additional security headers
+    // Set additional security headers for enhanced protection
     app.use((req, res, next) => {
         // Prevent caching of sensitive data
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
         
-        // Additional security headers
+        // Enhanced security headers for banking-grade protection
         res.setHeader('X-Content-Type-Options', 'nosniff');
         res.setHeader('X-Download-Options', 'noopen');
         res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+        
+        // Modern security headers for enhanced protection
+        res.setHeader('Permissions-Policy', 
+            'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), speaker=()'
+        );
+        
+        // Cross-Origin isolation headers (production only to avoid development issues)
+        if (process.env.NODE_ENV === 'production') {
+            res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+            res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+        }
+        
+        // Enhanced referrer policy
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        
+        // Additional banking security headers
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
         
         next();
     });

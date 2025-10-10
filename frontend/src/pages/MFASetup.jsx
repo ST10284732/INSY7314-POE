@@ -123,7 +123,7 @@ export default function MFASetup() {
         <div className="container">
           <div className="card">
             <div className="card-body" style={{ textAlign: 'center', padding: 'var(--space-8)' }}>
-              <div style={{ fontSize: '24px', marginBottom: 'var(--space-4)' }}>🔄</div>
+              <div style={{ fontSize: '24px', marginBottom: 'var(--space-4)' }}>◯</div>
               <div>Loading MFA settings...</div>
             </div>
           </div>
@@ -153,9 +153,9 @@ export default function MFASetup() {
               fontSize: 'var(--font-size-2xl)',
               fontWeight: 'var(--font-bold)'
             }}>
-              🔐 Multi-Factor Authentication
+              ⊞ Multi-Factor Authentication
             </h1>
-            <p style={{ margin: '4px 0 0 0', color: 'var(--gray-600)' }}>
+            <p style={{ margin: '4px 0 0 0', color: 'var(--text-primary)' }}>
               Secure your account with an additional layer of protection
             </p>
           </div>
@@ -176,7 +176,7 @@ export default function MFASetup() {
             borderRadius: 'var(--radius)',
             marginBottom: 'var(--space-4)'
           }}>
-            ❌ {error}
+            ✕ {error}
           </div>
         )}
 
@@ -188,7 +188,7 @@ export default function MFASetup() {
             borderRadius: 'var(--radius)',
             marginBottom: 'var(--space-4)'
           }}>
-            ✅ {success}
+            ✓ {success}
           </div>
         )}
 
@@ -196,7 +196,7 @@ export default function MFASetup() {
         {setupStep === 'status' && mfaStatus && (
           <div className="card">
             <div className="card-header">
-              <h2 style={{ margin: 0 }}>Current MFA Status</h2>
+              <h2 style={{ margin: 0, color: 'var(--text-primary)' }}>Current MFA Status</h2>
             </div>
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
@@ -204,13 +204,13 @@ export default function MFASetup() {
                   fontSize: '48px',
                   color: mfaStatus.mfaEnabled ? 'var(--secondary-green)' : 'var(--secondary-red)'
                 }}>
-                  {mfaStatus.mfaEnabled ? '🔐' : '🔓'}
+                  {mfaStatus.mfaEnabled ? '⊞' : '⊡'}
                 </div>
                 <div>
                   <h3 style={{ margin: 0, color: mfaStatus.mfaEnabled ? 'var(--secondary-green)' : 'var(--secondary-red)' }}>
                     MFA is {mfaStatus.mfaEnabled ? 'ENABLED' : 'DISABLED'}
                   </h3>
-                  <p style={{ margin: '4px 0 0 0', color: 'var(--gray-600)' }}>
+                  <p style={{ margin: '4px 0 0 0', color: 'var(--text-primary)' }}>
                     {mfaStatus.mfaEnabled 
                       ? `Setup completed. ${mfaStatus.backupCodesRemaining} backup codes remaining.`
                       : 'Your account is not protected by multi-factor authentication.'
@@ -225,7 +225,7 @@ export default function MFASetup() {
                     onClick={() => setSetupStep('generate')}
                     className="btn btn-primary"
                   >
-                    🔐 Enable MFA Protection
+                    ⊞ Enable MFA Protection
                   </button>
                 ) : (
                   <button
@@ -233,7 +233,7 @@ export default function MFASetup() {
                     className="btn btn-secondary"
                     disabled={loading}
                   >
-                    🔓 Disable MFA
+                    ✕ Disable MFA
                   </button>
                 )}
               </div>
@@ -248,7 +248,7 @@ export default function MFASetup() {
                 <h4 style={{ margin: '0 0 var(--space-2) 0', color: 'var(--primary-blue)' }}>
                   What is Multi-Factor Authentication?
                 </h4>
-                <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-primary)' }}>
                   MFA adds an extra layer of security to your account by requiring a second form of verification 
                   (like a code from your phone) in addition to your password. This helps protect your account 
                   even if someone else knows your password.
@@ -266,22 +266,22 @@ export default function MFASetup() {
             </div>
             <div className="card-body">
               <div style={{ textAlign: 'center', marginBottom: 'var(--space-6)' }}>
-                <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)' }}>📱</div>
+                <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)' }}>⬚</div>
                 <h3>Step 1: Install an Authenticator App</h3>
                 <p style={{ color: 'var(--gray-600)', marginBottom: 'var(--space-4)' }}>
                   You'll need an authenticator app on your phone to generate verification codes.
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px' }}>📱</div>
+                    <div style={{ fontSize: '32px' }}>⬚</div>
                     <div style={{ fontSize: '14px', fontWeight: 'var(--font-medium)' }}>Google Authenticator</div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px' }}>🔐</div>
+                    <div style={{ fontSize: '32px' }}>⊞</div>
                     <div style={{ fontSize: '14px', fontWeight: 'var(--font-medium)' }}>Authy</div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px' }}>🛡️</div>
+                    <div style={{ fontSize: '32px' }}>⬜</div>
                     <div style={{ fontSize: '14px', fontWeight: 'var(--font-medium)' }}>Microsoft Authenticator</div>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export default function MFASetup() {
                     className="btn btn-secondary"
                     style={{ fontSize: '14px' }}
                   >
-                    📋 Copy Key
+                    ▢ Copy Key
                   </button>
                 </div>
               </div>
@@ -398,7 +398,7 @@ export default function MFASetup() {
             </div>
             <div className="card-body">
               <div style={{ textAlign: 'center', marginBottom: 'var(--space-6)' }}>
-                <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)' }}>✅</div>
+                <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)' }}>✓</div>
                 <h3 style={{ color: 'var(--secondary-green)' }}>Multi-Factor Authentication Enabled</h3>
                 <p style={{ color: 'var(--gray-600)' }}>
                   Your account is now protected with an additional layer of security.
@@ -414,7 +414,7 @@ export default function MFASetup() {
                   marginBottom: 'var(--space-6)'
                 }}>
                   <h4 style={{ margin: '0 0 var(--space-3) 0', color: 'var(--secondary-red)' }}>
-                    ⚠️ Important: Save Your Backup Codes
+                    ⚠ Important: Save Your Backup Codes
                   </h4>
                   <p style={{ fontSize: '14px', marginBottom: 'var(--space-4)' }}>
                     Keep these backup codes in a safe place. You can use them to access your account if you lose your authenticator device.

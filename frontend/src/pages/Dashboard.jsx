@@ -71,14 +71,14 @@ export default function Dashboard() {
             }}>
               SecureBank
             </h1>
-            <p style={{ margin: '4px 0 0 0', color: 'var(--gray-600)' }}>
+            <p style={{ margin: '4px 0 0 0', color: 'var(--text-secondary)' }}>
               Welcome back! {currentTime.toLocaleTimeString()}
             </p>
           </div>
           <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center' }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>Good evening</div>
-              <div style={{ fontWeight: 'var(--font-semibold)', color: 'var(--gray-800)' }}>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Good evening</div>
+              <div style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)' }}>
                 {user?.username || 'Valued Customer'}
               </div>
             </div>
@@ -87,7 +87,7 @@ export default function Dashboard() {
               className="btn btn-secondary"
               style={{ fontSize: '14px' }}
             >
-              🚪 Sign Out
+              ← Sign Out
             </button>
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function Dashboard() {
                     Account: {accountData.accountNumber}
                   </div>
                 </div>
-                <div style={{ fontSize: '32px', color: 'rgba(255,255,255,0.8)' }}>▢</div>
+                <div style={{ fontSize: '32px', color: 'rgba(255,255,255,0.8)' }}>⬜</div>
               </div>
               <div style={{ 
                 marginTop: 'var(--space-6)',
@@ -135,7 +135,7 @@ export default function Dashboard() {
                   border: '1px solid rgba(255,255,255,0.3)',
                   fontSize: '14px'
                 }}>
-                  📄 Statement
+                  ⦚ Statement
                 </button>
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function Dashboard() {
           {/* Quick Actions */}
           <div className="card">
             <div className="card-header">
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)' }}>Quick Actions</h3>
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>Quick Actions</h3>
             </div>
             <div className="card-body">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
@@ -153,7 +153,7 @@ export default function Dashboard() {
                   style={{ flexDirection: 'column', height: '80px' }}
                   onClick={() => navigate('/create-payment')}
                 >
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>▢</div>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>↗</div>
                   <div style={{ fontSize: '12px' }}>Create Payment</div>
                 </button>
                 <button 
@@ -161,7 +161,7 @@ export default function Dashboard() {
                   style={{ flexDirection: 'column', height: '80px' }}
                   onClick={() => navigate('/payments')}
                 >
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>☰</div>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⦁⦁⦁</div>
                   <div style={{ fontSize: '12px' }}>Payment History</div>
                 </button>
                 <button 
@@ -169,7 +169,7 @@ export default function Dashboard() {
                   style={{ flexDirection: 'column', height: '80px' }}
                   onClick={() => navigate('/mfa-setup')}
                 >
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>◉</div>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⊞</div>
                   <div style={{ fontSize: '12px' }}>Security & MFA</div>
                 </button>
                 <button 
@@ -177,7 +177,7 @@ export default function Dashboard() {
                   style={{ flexDirection: 'column', height: '80px' }}
                   onClick={() => navigate('/settings')}
                 >
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⊙</div>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⚙</div>
                   <div style={{ fontSize: '12px' }}>Settings</div>
                 </button>
               </div>
@@ -188,9 +188,9 @@ export default function Dashboard() {
           <div className="card">
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
-                <div style={{ fontSize: '32px' }}>▢</div>
+                <div style={{ fontSize: '32px' }}>⬜</div>
                 <div>
-                  <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>Available Credit</div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Available Credit</div>
                   <div style={{ fontSize: '24px', fontWeight: 'var(--font-semibold)', color: 'var(--secondary-green)' }}>
                     {formatCurrency(accountData.availableCredit)}
                   </div>
@@ -209,7 +209,7 @@ export default function Dashboard() {
                   borderRadius: '4px'
                 }}></div>
               </div>
-              <div style={{ fontSize: '14px', color: 'var(--gray-600)' }}>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
                 75% available
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function Dashboard() {
         <div className="card">
           <div className="card-header">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)' }}>Recent Transactions</h3>
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>Recent Transactions</h3>
               <button className="btn btn-link">View All</button>
             </div>
           </div>
@@ -229,13 +229,13 @@ export default function Dashboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
-                    <th style={{ padding: 'var(--space-4)', textAlign: 'left', color: 'var(--gray-600)', fontSize: '14px' }}>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'left', color: 'var(--text-primary)', fontSize: '14px' }}>
                       Description
                     </th>
-                    <th style={{ padding: 'var(--space-4)', textAlign: 'left', color: 'var(--gray-600)', fontSize: '14px' }}>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'left', color: 'var(--text-primary)', fontSize: '14px' }}>
                       Date
                     </th>
-                    <th style={{ padding: 'var(--space-4)', textAlign: 'right', color: 'var(--gray-600)', fontSize: '14px' }}>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'right', color: 'var(--text-primary)', fontSize: '14px' }}>
                       Amount
                     </th>
                   </tr>
@@ -246,26 +246,30 @@ export default function Dashboard() {
                       <td style={{ padding: 'var(--space-4)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
                           <div style={{ 
-                            fontSize: '20px',
+                            fontSize: '18px',
                             width: '40px',
                             height: '40px',
                             borderRadius: 'var(--radius-full)',
-                            background: transaction.type === 'credit' ? 'var(--bg-accent)' : 'var(--gray-100)',
+                            background: transaction.type === 'credit' ? '#22c55e' : '#ef4444',
+                            color: 'white',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            fontWeight: 'bold',
+                            lineHeight: '1',
+                            textAlign: 'center'
                           }}>
-                            {transaction.type === 'credit' ? '+' : '-'}
+                            {transaction.type === 'credit' ? '+' : '−'}
                           </div>
                           <div>
                             <div style={{ fontWeight: 'var(--font-medium)' }}>{transaction.description}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--gray-500)' }}>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                               {transaction.type === 'credit' ? 'Credit' : 'Debit'}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: 'var(--space-4)', color: 'var(--gray-600)' }}>
+                      <td style={{ padding: 'var(--space-4)', color: 'var(--text-secondary)' }}>
                         {formatDate(transaction.date)}
                       </td>
                       <td style={{ 
