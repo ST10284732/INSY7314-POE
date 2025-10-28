@@ -10,6 +10,8 @@ const { securityMiddlewares, createAuthLimiter, createPaymentLimiter } = require
 const userRoutes = require('./routes/userRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const mfaRoutes = require('./routes/mfaRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -39,6 +41,8 @@ app.get('/health', (req, res) => {
 app.use('/v1/user', userRoutes);
 app.use('/v1/payments', paymentRoutes);
 app.use('/v1/mfa', mfaRoutes);
+app.use('/v1/employee', employeeRoutes);
+app.use('/v1/admin', adminRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
