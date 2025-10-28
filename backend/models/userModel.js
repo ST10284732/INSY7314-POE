@@ -9,6 +9,14 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     
+    // Role-based access control (RBAC)
+    role: { 
+        type: String, 
+        enum: ['Customer', 'Employee', 'Admin'],
+        default: 'Customer',
+        required: true 
+    },
+    
     // Multi-Factor Authentication fields
     mfaEnabled: { type: Boolean, default: false },
     mfaSecret: { type: String, default: null }, // TOTP secret key
