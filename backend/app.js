@@ -12,6 +12,8 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const mfaRoutes = require('./routes/mfaRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const accountRoutes = require('./routes/accountRoutes');
+const beneficiaryRoutes = require('./routes/beneficiaryRoutes');
 
 const app = express();
 
@@ -43,6 +45,8 @@ app.use('/v1/payments', paymentRoutes);
 app.use('/v1/mfa', mfaRoutes);
 app.use('/v1/employee', employeeRoutes);
 app.use('/v1/admin', adminRoutes);
+app.use('/v1/account', accountRoutes);
+app.use('/v1/beneficiaries', beneficiaryRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
