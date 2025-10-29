@@ -121,7 +121,7 @@ export default function EmployeeDashboard() {
               className="btn btn-secondary"
               style={{ fontSize: '14px' }}
             >
-              ← Sign Out
+              <i className="fas fa-sign-out-alt"></i> Sign Out
             </button>
           </div>
         </div>
@@ -205,19 +205,25 @@ export default function EmployeeDashboard() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
               <Link to="/employee/pending" style={{ textDecoration: 'none' }}>
                 <button className="btn btn-primary" style={{ width: '100%', flexDirection: 'column', padding: 'var(--space-5)' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>⏳</div>
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    <i className="fas fa-clock"></i>
+                  </div>
                   <div style={{ fontSize: '14px' }}>Review Pending Payments</div>
                 </button>
               </Link>
               <Link to="/employee/history" style={{ textDecoration: 'none' }}>
                 <button className="btn btn-primary" style={{ width: '100%', flexDirection: 'column', padding: 'var(--space-5)' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>📋</div>
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    <i className="fas fa-file-invoice-dollar"></i>
+                  </div>
                   <div style={{ fontSize: '14px' }}>View Payment History</div>
                 </button>
               </Link>
               <Link to="/settings" style={{ textDecoration: 'none' }}>
                 <button className="btn btn-primary" style={{ width: '100%', flexDirection: 'column', padding: 'var(--space-5)' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>⚙</div>
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    <i className="fas fa-cog"></i>
+                  </div>
                   <div style={{ fontSize: '14px' }}>Settings</div>
                 </button>
               </Link>

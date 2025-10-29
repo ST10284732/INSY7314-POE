@@ -60,7 +60,7 @@ export default function CreateStaff() {
       <div className="container" style={{ maxWidth: '600px' }}>
         <div style={{ marginBottom: 'var(--space-6)' }}>
           <Link to="/admin/dashboard" className="btn btn-link" style={{ marginBottom: 'var(--space-4)', display: 'inline-block' }}>
-            ← Back to Dashboard
+            <i className="fas fa-arrow-left"></i> Back to Dashboard
           </Link>
           <h1 style={{ margin: 0, color: 'var(--text-primary)' }}>Create Staff User</h1>
           <p style={{ margin: '8px 0 0 0', color: 'var(--text-secondary)' }}>

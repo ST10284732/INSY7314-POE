@@ -85,7 +85,7 @@ export default function PaymentHistory() {
       <div className="container">
         <div style={{ marginBottom: 'var(--space-6)' }}>
           <Link to={user?.role === 'Admin' ? '/admin/dashboard' : '/employee/dashboard'} className="btn btn-link" style={{ marginBottom: 'var(--space-4)', display: 'inline-block' }}>
-            ← Back to Dashboard
+            <i className="fas fa-arrow-left"></i> Back to Dashboard
           </Link>
           <h1 style={{ margin: 0, color: 'var(--text-primary)' }}>Payment History</h1>
           <p style={{ margin: '8px 0 0 0', color: 'var(--text-secondary)' }}>

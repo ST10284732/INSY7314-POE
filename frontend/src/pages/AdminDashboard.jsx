@@ -109,7 +109,7 @@ export default function AdminDashboard() {
                 border: '1px solid rgba(255,255,255,0.3)'
               }}
             >
-              ← Sign Out
+              <i className="fas fa-sign-out-alt"></i> Sign Out
             </button>
           </div>
         </div>
@@ -193,19 +193,25 @@ export default function AdminDashboard() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
               <Link to="/admin/employees" style={{ textDecoration: 'none' }}>
                 <button className="btn btn-primary" style={{ width: '100%', flexDirection: 'column', padding: 'var(--space-5)' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>👥</div>
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    <i className="fas fa-users"></i>
+                  </div>
                   <div style={{ fontSize: '14px' }}>Manage Employees</div>
                 </button>
               </Link>
               <Link to="/admin/create-staff" style={{ textDecoration: 'none' }}>
                 <button className="btn btn-primary" style={{ width: '100%', flexDirection: 'column', padding: 'var(--space-5)' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>➕</div>
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    <i className="fas fa-user-plus"></i>
+                  </div>
                   <div style={{ fontSize: '14px' }}>Create Staff User</div>
                 </button>
               </Link>
               <Link to="/settings" style={{ textDecoration: 'none' }}>
                 <button className="btn btn-primary" style={{ width: '100%', flexDirection: 'column', padding: 'var(--space-5)' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>⚙</div>
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    <i className="fas fa-cog"></i>
+                  </div>
                   <div style={{ fontSize: '14px' }}>Settings</div>
                 </button>
               </Link>
