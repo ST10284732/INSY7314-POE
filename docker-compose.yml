@@ -9,13 +9,16 @@ services:
     
     # we tell it to expose these ports
     ports:
-      # port on local pc : port in container
+      # HTTP port
       - "3000:3000"
+      # HTTPS port
+      - "3443:3443"
 
   library_frontend:
     build:
       context: ./frontend
     ports:
+      # HTTPS port for frontend (Vite will use this)
       - "5173:5173"
     # specify what we need to wait for before running the container
     depends_on:
