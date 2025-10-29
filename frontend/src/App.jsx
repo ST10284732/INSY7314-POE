@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
-import Dashboard from './pages/Dashboard.jsx';
+import Dashboard from './pages/EnhancedDashboard.jsx';
+import Transactions from './pages/Transactions.jsx';
+import Beneficiaries from './pages/Beneficiaries.jsx';
 import EmployeeDashboard from './pages/EmployeeDashboard.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import CreatePayment from './pages/CreatePayment.jsx';
@@ -124,6 +126,22 @@ function App() {
           element={
             <RoleProtectedRoute allowedRoles="Customer">
               <PaymentsList />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <RoleProtectedRoute allowedRoles="Customer">
+              <Transactions />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/beneficiaries"
+          element={
+            <RoleProtectedRoute allowedRoles="Customer">
+              <Beneficiaries />
             </RoleProtectedRoute>
           }
         />
