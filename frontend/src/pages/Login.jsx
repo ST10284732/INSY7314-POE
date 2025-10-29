@@ -51,7 +51,18 @@ export default function Login() {
           setMessage("Login successful! Redirecting...");
           setMessageType("success");
           login(data.token);
-          setTimeout(() => navigate("/dashboard"), 1500);
+          
+          // Redirect based on user role
+          const userRole = data.user?.role || 'Customer';
+          setTimeout(() => {
+            if (userRole === 'Admin') {
+              navigate('/admin/dashboard');
+            } else if (userRole === 'Employee') {
+              navigate('/employee/dashboard');
+            } else {
+              navigate('/dashboard'); // Customer dashboard
+            }
+          }, 1500);
         } else if (data.requiresMFA) {
           setMessage("Enter the 6-digit code from your authenticator app");
           setMessageType("info");
@@ -102,7 +113,18 @@ export default function Login() {
         setMessage("MFA verification successful! Redirecting...");
         setMessageType("success");
         login(data.token);
-        setTimeout(() => navigate("/dashboard"), 1500);
+        
+        // Redirect based on user role
+        const userRole = data.user?.role || 'Customer';
+        setTimeout(() => {
+          if (userRole === 'Admin') {
+            navigate('/admin/dashboard');
+          } else if (userRole === 'Employee') {
+            navigate('/employee/dashboard');
+          } else {
+            navigate('/dashboard'); // Customer dashboard
+          }
+        }, 1500);
       } else {
         setMessage(data.message || "Invalid MFA code. Please try again.");
         setMessageType("error");

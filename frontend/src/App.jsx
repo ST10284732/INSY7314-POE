@@ -4,11 +4,18 @@ import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import EmployeeDashboard from './pages/EmployeeDashboard.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
 import CreatePayment from './pages/CreatePayment.jsx';
 import PaymentsList from './pages/PaymentsList.jsx';
+import PendingPayments from './pages/PendingPayments.jsx';
+import PaymentHistory from './pages/PaymentHistory.jsx';
+import ManageEmployees from './pages/ManageEmployees.jsx';
+import CreateStaff from './pages/CreateStaff.jsx';
 import MFASetup from './pages/MFASetup.jsx';
 import Settings from './pages/Settings.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import RoleProtectedRoute from './components/RoleProtectedRoute.jsx';
 import SessionIndicator from './components/SessionIndicator.jsx';
 import { useAutoLogout } from './hooks/useAutoLogout.js';
 import './styles/modern-banking.css';
@@ -95,31 +102,85 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected routes */}
+        {/* Customer routes */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles="Customer">
               <Dashboard />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/create-payment"
           element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles="Customer">
               <CreatePayment />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/payments"
           element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles="Customer">
               <PaymentsList />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
+        
+        {/* Employee routes */}
+        <Route
+          path="/employee/dashboard"
+          element={
+            <RoleProtectedRoute allowedRoles="Employee">
+              <EmployeeDashboard />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/employee/pending"
+          element={
+            <RoleProtectedRoute allowedRoles="Employee">
+              <PendingPayments />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/employee/history"
+          element={
+            <RoleProtectedRoute allowedRoles="Employee">
+              <PaymentHistory />
+            </RoleProtectedRoute>
+          }
+        />
+        
+        {/* Admin routes */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <RoleProtectedRoute allowedRoles="Admin">
+              <AdminDashboard />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/employees"
+          element={
+            <RoleProtectedRoute allowedRoles="Admin">
+              <ManageEmployees />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/create-staff"
+          element={
+            <RoleProtectedRoute allowedRoles="Admin">
+              <CreateStaff />
+            </RoleProtectedRoute>
+          }
+        />
+        
+        {/* Shared protected routes */}
         <Route
           path="/mfa-setup"
           element={
