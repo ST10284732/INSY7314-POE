@@ -10,7 +10,25 @@ import { useAuth } from '../context/AuthContext.jsx';
  * @param {string} redirectTo - Where to redirect if unauthorized (default: '/login')
  */
 export default function RoleProtectedRoute({ allowedRoles, children, redirectTo = '/login' }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
+  
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh',
+        background: 'var(--bg-secondary)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔐</div>
+          <div style={{ color: 'var(--text-secondary)' }}>Verifying session...</div>
+        </div>
+      </div>
+    );
+  }
   
   // Not authenticated - redirect to login
   if (!isAuthenticated) {

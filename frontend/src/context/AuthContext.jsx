@@ -6,6 +6,7 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   // Check localStorage on mount
   useEffect(() => {
@@ -26,6 +27,7 @@ export function AuthProvider({ children }) {
         logout();
       }
     }
+    setLoading(false); // Mark loading as complete
   }, []);
 
   // Login method (save token & set auth state)
@@ -68,6 +70,7 @@ export function AuthProvider({ children }) {
       isAuthenticated, 
       user, 
       token,
+      loading,
       login, 
       logout 
     }}>
