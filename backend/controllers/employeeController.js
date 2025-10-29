@@ -1,5 +1,7 @@
 const Payment = require('../models/paymentModel');
 const User = require('../models/userModel');
+const Transaction = require('../models/transactionModel');
+const Beneficiary = require('../models/beneficiaryModel');
 const mongoose = require('mongoose');
 const mongoSanitize = require('mongo-sanitize');
 
@@ -118,6 +120,73 @@ const updatePaymentStatus = async (req, res) => {
             reason: reason || 'No reason provided',
             timestamp: new Date()
         });
+        
+        // If payment is approved (completed), deduct from customer balance and create transaction
+        if (payment.status === 'completed') {
+            const customer = await User.findById(payment.userId);
+            
+            if (!customer) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Customer not found'
+                });
+            }
+            
+            // Check if customer has sufficient balance
+            if (customer.balance < payment.amount) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Insufficient balance. Customer has ${customer.balance}, payment requires ${payment.amount}`
+                });
+            }
+            
+            // Deduct amount from customer balance
+            customer.balance -= payment.amount;
+            const balanceAfter = customer.balance;
+            await customer.save();
+            
+            // Create transaction record
+            const transaction = new Transaction({
+                userId: payment.userId,
+                type: 'payment',
+                amount: -payment.amount, // Negative for debit
+                currency: payment.currency,
+                balanceAfter: balanceAfter,
+                description: `Payment to ${payment.recipientName} - ${payment.paymentReference}`,
+                category: 'other', // Use 'other' instead of 'transfer'
+                status: 'completed',
+                metadata: {
+                    paymentId: payment.paymentId,
+                    recipientName: payment.recipientName,
+                    recipientAccount: payment.recipientAccount,
+                    recipientBank: payment.recipientBank,
+                    swiftCode: payment.swiftCode,
+                    approvedBy: req.user.username,
+                    approvedAt: new Date()
+                }
+            });
+            
+            await transaction.save();
+            
+            // Update beneficiary usage if matching beneficiary exists
+            try {
+                const beneficiary = await Beneficiary.findOne({
+                    userId: payment.userId,
+                    accountNumber: payment.recipientAccount,
+                    isActive: true
+                });
+                
+                if (beneficiary) {
+                    await beneficiary.markAsUsed();
+                    console.log(`[EMPLOYEE] Updated beneficiary usage: ${beneficiary.name}`);
+                }
+            } catch (err) {
+                console.error('[EMPLOYEE] Failed to update beneficiary usage:', err.message);
+                // Don't fail the payment if beneficiary update fails
+            }
+            
+            console.log(`[EMPLOYEE] Payment ${payment.paymentId} approved - deducted ${payment.amount} from customer balance, new balance: ${balanceAfter}`);
+        }
         
         await payment.save();
         
