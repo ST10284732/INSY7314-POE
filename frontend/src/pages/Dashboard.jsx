@@ -87,7 +87,7 @@ export default function Dashboard() {
               className="btn btn-secondary"
               style={{ fontSize: '14px' }}
             >
-              ← Sign Out
+              <i className="fas fa-sign-out-alt"></i> Sign Out
             </button>
           </div>
         </div>
@@ -169,7 +169,9 @@ export default function Dashboard() {
                   style={{ flexDirection: 'column', height: '80px' }}
                   onClick={() => navigate('/mfa-setup')}
                 >
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⊞</div>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>
+                    <i className="fas fa-shield-alt"></i>
+                  </div>
                   <div style={{ fontSize: '12px' }}>Security & MFA</div>
                 </button>
                 <button 
@@ -177,7 +179,9 @@ export default function Dashboard() {
                   style={{ flexDirection: 'column', height: '80px' }}
                   onClick={() => navigate('/settings')}
                 >
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⚙</div>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>
+                    <i className="fas fa-cog"></i>
+                  </div>
                   <div style={{ fontSize: '12px' }}>Settings</div>
                 </button>
               </div>
