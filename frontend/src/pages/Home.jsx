@@ -98,7 +98,9 @@ export default function Home() {
         }}>
           <div className="card">
             <div className="card-body text-center">
-              <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)', fontWeight: 'bold' }}>PAYMENTS</div>
+              <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)', color: 'var(--primary-blue)' }}>
+                <i className="fas fa-lock"></i>
+              </div>
               <h3 style={{ marginBottom: 'var(--space-3)' }}>Secure Payments</h3>
               <p style={{ margin: 0, color: 'var(--gray-600)' }}>
                 Make international payments with bank-grade security and real-time fraud protection.
@@ -108,17 +110,21 @@ export default function Home() {
 
           <div className="card">
             <div className="card-body text-center">
-              <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)', fontWeight: 'bold' }}>MOBILE</div>
-              <h3 style={{ marginBottom: 'var(--space-3)' }}>Mobile Banking</h3>
+              <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)', color: 'var(--primary-blue)' }}>
+                <i className="fas fa-user-shield"></i>
+              </div>
+              <h3 style={{ marginBottom: 'var(--space-3)' }}>Multi-Factor Auth</h3>
               <p style={{ margin: 0, color: 'var(--gray-600)' }}>
-                Access your accounts anywhere, anytime with our modern mobile-first platform.
+                Protect your account with two-factor authentication and advanced security features.
               </p>
             </div>
           </div>
 
           <div className="card">
             <div className="card-body text-center">
-              <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)', fontWeight: 'bold' }}>GLOBAL</div>
+              <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)', color: 'var(--primary-blue)' }}>
+                <i className="fas fa-globe-americas"></i>
+              </div>
               <h3 style={{ marginBottom: 'var(--space-3)' }}>Global Reach</h3>
               <p style={{ margin: 0, color: 'var(--gray-600)' }}>
                 Send and receive money across borders with competitive exchange rates.

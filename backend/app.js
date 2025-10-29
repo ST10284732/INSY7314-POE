@@ -68,14 +68,14 @@ app.use((err, req, res, next) => {
     }
 });
 
-// 404 handler for undefined routes (commented out to avoid path-to-regexp issue)
-// app.use('*', (req, res) => {
-//     console.log(`[404] ${new Date().toISOString()} - ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
-//     res.status(404).json({
-//         success: false,
-//         message: 'API endpoint not found'
-//     });
-// });
+// 404 handler for undefined routes
+app.use((req, res) => {
+    console.log(`[404] ${new Date().toISOString()} - ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
+    res.status(404).json({
+        success: false,
+        message: 'API endpoint not found'
+    });
+});
 
 // Connect to MongoDB
 connectToMongo();
