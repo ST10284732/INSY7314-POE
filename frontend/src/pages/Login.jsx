@@ -51,7 +51,18 @@ export default function Login() {
           setMessage("Login successful! Redirecting...");
           setMessageType("success");
           login(data.token);
-          setTimeout(() => navigate("/dashboard"), 1500);
+          
+          // Redirect based on user role
+          const userRole = data.user?.role || 'Customer';
+          setTimeout(() => {
+            if (userRole === 'Admin') {
+              navigate('/admin/dashboard');
+            } else if (userRole === 'Employee') {
+              navigate('/employee/dashboard');
+            } else {
+              navigate('/dashboard'); // Customer dashboard
+            }
+          }, 1500);
         } else if (data.requiresMFA) {
           setMessage("Enter the 6-digit code from your authenticator app");
           setMessageType("info");
@@ -102,7 +113,18 @@ export default function Login() {
         setMessage("MFA verification successful! Redirecting...");
         setMessageType("success");
         login(data.token);
-        setTimeout(() => navigate("/dashboard"), 1500);
+        
+        // Redirect based on user role
+        const userRole = data.user?.role || 'Customer';
+        setTimeout(() => {
+          if (userRole === 'Admin') {
+            navigate('/admin/dashboard');
+          } else if (userRole === 'Employee') {
+            navigate('/employee/dashboard');
+          } else {
+            navigate('/dashboard'); // Customer dashboard
+          }
+        }, 1500);
       } else {
         setMessage(data.message || "Invalid MFA code. Please try again.");
         setMessageType("error");
@@ -120,6 +142,11 @@ export default function Login() {
     <div className="page-container">
       <div className="card" style={{ maxWidth: '450px', width: '100%' }}>
         <div className="card-header text-center">
+          <div style={{ marginBottom: 'var(--space-4)' }}>
+            <Link to="/" className="btn-link" style={{ textDecoration: 'none', fontSize: '14px' }}>
+              <i className="fas fa-arrow-left"></i> Back to Home
+            </Link>
+          </div>
           <h2 style={{ margin: 0, color: 'var(--primary-blue)' }}>
             Secure Banking
           </h2>
@@ -274,37 +301,6 @@ export default function Login() {
             </button>
           </form>
           )}
-
-          <div style={{ margin: 'var(--space-6) 0', textAlign: 'center' }}>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 'var(--space-4)',
-              color: 'var(--gray-400)',
-              fontSize: '14px'
-            }}>
-              <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
-              Or
-              <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              style={{ flex: 1, fontSize: '14px' }}
-            >
-              Secure Access
-            </button>
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              style={{ flex: 1, fontSize: '14px' }}
-            >
-              Mobile Banking
-            </button>
-          </div>
         </div>
 
         <div className="card-footer text-center">

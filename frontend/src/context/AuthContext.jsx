@@ -6,6 +6,7 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   // Check localStorage on mount
   useEffect(() => {
@@ -16,12 +17,17 @@ export function AuthProvider({ children }) {
       // Decode user info from token if needed
       try {
         const payload = JSON.parse(atob(savedToken.split('.')[1]));
-        setUser({ userId: payload.userId, username: payload.username });
+        setUser({ 
+          userId: payload.userId, 
+          username: payload.username,
+          role: payload.role || 'Customer' // Default to Customer if no role
+        });
       } catch (err) {
         console.error('Invalid token format');
         logout();
       }
     }
+    setLoading(false); // Mark loading as complete
   }, []);
 
   // Login method (save token & set auth state)
@@ -41,7 +47,11 @@ export function AuthProvider({ children }) {
         throw new Error('JWT must have 3 parts');
       }
       const payload = JSON.parse(atob(newToken.split('.')[1]));
-      setUser({ userId: payload.userId, username: payload.username });
+      setUser({ 
+        userId: payload.userId, 
+        username: payload.username,
+        role: payload.role || 'Customer' // Default to Customer if no role
+      });
     } catch (err) {
       console.error('Invalid token format:', err.message, 'Token:', newToken);
     }
@@ -60,6 +70,7 @@ export function AuthProvider({ children }) {
       isAuthenticated, 
       user, 
       token,
+      loading,
       login, 
       logout 
     }}>

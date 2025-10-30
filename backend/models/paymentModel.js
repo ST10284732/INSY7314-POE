@@ -105,7 +105,23 @@ const paymentSchema = new mongoose.Schema({
   userAgent: {
     type: String,
     required: true
-  }
+  },
+  
+  // Status history for audit trail
+  statusHistory: [{
+    from: String,
+    to: String,
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    updatedByUsername: String,
+    reason: String,
+    timestamp: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true // Automatically manage createdAt and updatedAt
 });

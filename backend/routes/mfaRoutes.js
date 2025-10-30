@@ -243,6 +243,7 @@ router.post('/login',
                         userId: user._id,
                         username: user.username,
                         accountNumber: user.accountNumber,
+                        role: user.role,
                         iat: Math.floor(Date.now() / 1000),
                         sessionId: `${user._id}_${Date.now()}`
                     };
@@ -266,6 +267,7 @@ router.post('/login',
                         lastname: user.lastname,
                         username: user.username,
                         accountNumber: user.accountNumber,
+                        role: user.role,
                         mfaEnabled: user.mfaEnabled || false
                     },
                     sessionTimeout: 15 * 60 * 1000
@@ -323,6 +325,7 @@ router.post('/login',
                     userId: user._id,
                     username: user.username,
                     accountNumber: user.accountNumber,
+                    role: user.role,
                     iat: Math.floor(Date.now() / 1000),
                     sessionId: `${user._id}_${Date.now()}`
                 };
@@ -346,6 +349,7 @@ router.post('/login',
                     lastname: user.lastname,
                     username: user.username,
                     accountNumber: user.accountNumber,
+                    role: user.role,
                     mfaEnabled: user.mfaEnabled || false
                 },
                 mfaVerified: true,

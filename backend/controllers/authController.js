@@ -11,7 +11,8 @@ const generateJwt = (user) => {
     // signs it using our secret (that it pulls from .env)
     return jwt.sign({
         userId: user._id,
-        username: user.username
+        username: user.username,
+        role: user.role // Include role in JWT token
     }, process.env.JWT_SECRET, {
         // set an expiry of 1 hour from signing
         expiresIn: "1h",
@@ -55,19 +56,25 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         
         // Create new user with all required fields
+        // Role is automatically set to 'Customer' by default in the schema
         const newUser = await User.create({
             firstname: firstname,
             lastname: lastname,
             idNumber: idNumber,
             accountNumber: accountNumber,
             username: username,
-            password: hashedPassword
+            password: hashedPassword,
+            role: 'Customer' // Explicitly set role to Customer for regular registration
         });
 
         res.status(201).json({
             success: true,
             message: "User created successfully",
-            token: generateJwt(newUser)
+            token: generateJwt(newUser),
+            user: {
+                username: newUser.username,
+                role: newUser.role
+            }
         });
     } catch (e) {
         console.error('Registration error:', e);
@@ -133,7 +140,11 @@ const login = async (req, res) => {
         // otherwise, generate a token and log them in
         res.status(200).json({
             success: true,
-            token: generateJwt(exists)
+            token: generateJwt(exists),
+            user: {
+                username: exists.username,
+                role: exists.role
+            }
         });
     } catch (error) {
         console.error('Login error:', error);

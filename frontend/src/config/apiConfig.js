@@ -2,14 +2,18 @@
 const API_CONFIG = {
   // Determine the appropriate API base URL
   getBaseURL: () => {
+    // Use environment variable if available, otherwise use window location host
+    const apiHost = import.meta.env.VITE_API_HOST || window.location.hostname;
     const protocol = window.location.protocol;
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = import.meta.env.MODE === 'production';
     
-    if (isProduction) {
-      return `${protocol}//localhost:3443/v1`;
-    } else {
-      return `${protocol}//localhost:3000/v1`;
+    // Use HTTPS port 3443 for secure connections
+    if (protocol === 'https:') {
+      return `https://${apiHost}:3443/v1`;
     }
+    
+    // Fallback to HTTP port 3000
+    return `http://${apiHost}:3000/v1`;
   },
   
   // Get full API URL for a specific endpoint
