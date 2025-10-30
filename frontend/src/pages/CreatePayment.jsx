@@ -1,11 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import API_CONFIG from '../config/apiConfig.js';
 import '../styles/modern-banking.css';
 
 export default function CreatePayment() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const beneficiaryFromState = location.state?.beneficiary;
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -22,6 +25,84 @@ export default function CreatePayment() {
   const [messageType, setMessageType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  
+  // Beneficiaries state
+  const [beneficiaries, setBeneficiaries] = useState([]);
+  const [selectedBeneficiary, setSelectedBeneficiary] = useState(null);
+  const [showBeneficiaryDropdown, setShowBeneficiaryDropdown] = useState(false);
+
+  // Load beneficiaries on mount
+  useEffect(() => {
+    fetchBeneficiaries();
+  }, []);
+
+  // If beneficiary was passed from state, pre-fill the form
+  useEffect(() => {
+    if (beneficiaryFromState) {
+      fillFormFromBeneficiary(beneficiaryFromState);
+      setSelectedBeneficiary(beneficiaryFromState);
+    }
+  }, [beneficiaryFromState]);
+
+  const fetchBeneficiaries = async () => {
+    try {
+      const res = await fetch(API_CONFIG.getURL('/beneficiaries?limit=100'), {
+        headers: {
+          ...API_CONFIG.getHeaders(),
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setBeneficiaries(data.data.beneficiaries);
+      }
+    } catch (err) {
+      console.error('Failed to load beneficiaries');
+    }
+  };
+
+  const fillFormFromBeneficiary = (ben) => {
+    setFormData({
+      amount: '',
+      currency: ben.currency,
+      recipientName: ben.name,
+      recipientBank: ben.bankName,
+      recipientAccount: ben.accountNumber,
+      swiftCode: ben.swiftCode,
+      provider: ben.provider,
+      paymentReference: ben.defaultReference || ''
+    });
+  };
+
+  const handleBeneficiarySelect = (ben) => {
+    fillFormFromBeneficiary(ben);
+    setSelectedBeneficiary(ben);
+    setShowBeneficiaryDropdown(false);
+    
+    // Mark beneficiary as used
+    fetch(API_CONFIG.getURL(`/beneficiaries/${ben._id}/favorite`), {
+      method: 'PATCH',
+      headers: {
+        ...API_CONFIG.getHeaders(),
+        'Authorization': `Bearer ${token}`
+      }
+    }).catch(() => {}); // Silent fail
+  };
+
+  const clearBeneficiary = () => {
+    setSelectedBeneficiary(null);
+    setFormData({
+      amount: '',
+      currency: 'USD',
+      recipientName: '',
+      recipientBank: '',
+      recipientAccount: '',
+      swiftCode: '',
+      provider: 'SWIFT',
+      paymentReference: ''
+    });
+  };
 
   // Currency options
   const currencies = [
@@ -170,6 +251,45 @@ export default function CreatePayment() {
         setMessage(`Payment created successfully! Payment ID: ${data.payment.paymentId}`);
         setMessageType('success');
         
+        // Save as beneficiary if checkbox was checked
+        if (formData.saveAsBeneficiary && !selectedBeneficiary) {
+          try {
+            await fetch(API_CONFIG.getURL('/beneficiaries'), {
+              method: 'POST',
+              headers: {
+                ...API_CONFIG.getHeaders(),
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                name: formData.recipientName,
+                bankName: formData.recipientBank,
+                accountNumber: formData.recipientAccount,
+                swiftCode: formData.swiftCode,
+                provider: formData.provider,
+                currency: formData.currency,
+                defaultReference: formData.paymentReference
+              })
+            });
+          } catch (err) {
+            console.error('Failed to save beneficiary');
+          }
+        }
+        
+        // Mark beneficiary as used if one was selected
+        if (selectedBeneficiary) {
+          try {
+            await fetch(API_CONFIG.getURL(`/beneficiaries/${selectedBeneficiary._id}`), {
+              method: 'PATCH',
+              headers: {
+                ...API_CONFIG.getHeaders(),
+                'Authorization': `Bearer ${token}`
+              }
+            });
+          } catch (err) {
+            console.error('Failed to update beneficiary usage');
+          }
+        }
+        
         // Redirect to dashboard after 3 seconds
         setTimeout(() => {
           navigate('/dashboard');
@@ -207,6 +327,125 @@ export default function CreatePayment() {
           )}
 
           <form onSubmit={handleSubmit}>
+            {/* Beneficiary Selection */}
+            <div className="form-group" style={{ marginBottom: 'var(--space-5)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+                <label className="form-label">Quick Select from Beneficiaries</label>
+                <Link to="/beneficiaries" style={{ fontSize: '12px', color: 'var(--primary-blue)' }}>
+                  Manage Beneficiaries →
+                </Link>
+              </div>
+              
+              {selectedBeneficiary ? (
+                <div style={{
+                  padding: 'var(--space-4)',
+                  background: 'var(--bg-accent)',
+                  border: '2px solid var(--primary-blue)',
+                  borderRadius: 'var(--radius-md)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div>
+                    <div style={{ fontWeight: 'var(--font-medium)', color: 'var(--primary-blue)' }}>
+                      ✓ Using beneficiary: {selectedBeneficiary.nickname || selectedBeneficiary.name}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                      {selectedBeneficiary.bankName} • {selectedBeneficiary.accountNumber}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={clearBeneficiary}
+                    className="btn btn-secondary"
+                    style={{ fontSize: '12px', padding: '6px 12px' }}
+                  >
+                    Clear
+                  </button>
+                </div>
+              ) : beneficiaries.length > 0 ? (
+                <div style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowBeneficiaryDropdown(!showBeneficiaryDropdown)}
+                    className="form-input"
+                    style={{ 
+                      width: '100%', 
+                      textAlign: 'left', 
+                      cursor: 'pointer',
+                      background: 'white',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-secondary)' }}>Select a saved beneficiary...</span>
+                    <span>{showBeneficiaryDropdown ? '▲' : '▼'}</span>
+                  </button>
+                  
+                  {showBeneficiaryDropdown && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      maxHeight: '300px',
+                      overflow: 'auto',
+                      background: 'white',
+                      border: '1px solid var(--border-light)',
+                      borderRadius: 'var(--radius-md)',
+                      boxShadow: 'var(--shadow-lg)',
+                      zIndex: 10,
+                      marginTop: '4px'
+                    }}>
+                      {beneficiaries.map((ben) => (
+                        <button
+                          key={ben._id}
+                          type="button"
+                          onClick={() => handleBeneficiarySelect(ben)}
+                          style={{
+                            width: '100%',
+                            padding: 'var(--space-3)',
+                            border: 'none',
+                            borderBottom: '1px solid var(--border-light)',
+                            background: 'white',
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.target.style.background = 'var(--bg-accent)'}
+                          onMouseLeave={(e) => e.target.style.background = 'white'}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {ben.isFavorite && <span style={{ color: '#ffc107' }}><i className="fas fa-star"></i></span>}
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: 'var(--font-medium)' }}>
+                                {ben.nickname || ben.name}
+                              </div>
+                              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                {ben.bankName} • {ben.accountNumber}
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ 
+                  padding: 'var(--space-4)', 
+                  background: 'var(--bg-secondary)', 
+                  borderRadius: 'var(--radius-md)',
+                  textAlign: 'center',
+                  color: 'var(--text-secondary)',
+                  fontSize: '14px'
+                }}>
+                  No saved beneficiaries. <Link to="/beneficiaries" style={{ color: 'var(--primary-blue)' }}>Add one now</Link>
+                </div>
+              )}
+            </div>
+
             {/* Amount and Currency */}
             <div style={{ display: 'flex', gap: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
               <div className="form-group" style={{ flex: 2, margin: 0 }}>
@@ -377,6 +616,20 @@ export default function CreatePayment() {
               </div>
             </div>
 
+            {/* Save as Beneficiary Option */}
+            {!selectedBeneficiary && formData.recipientName && formData.recipientAccount && (
+              <div className="form-group" style={{ marginBottom: 'var(--space-5)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.saveAsBeneficiary || false}
+                    onChange={(e) => setFormData({ ...formData, saveAsBeneficiary: e.target.checked })}
+                  />
+                  <span><i className="fas fa-save"></i> Save this recipient as a beneficiary for future payments</span>
+                </label>
+              </div>
+            )}
+
             {/* Security Notice */}
             <div style={{ 
               marginBottom: 'var(--space-5)', 
@@ -414,7 +667,7 @@ export default function CreatePayment() {
             onClick={() => navigate('/dashboard')}
             style={{ textDecoration: 'none' }}
           >
-            ← Back to Dashboard
+            <i className="fas fa-arrow-left"></i> Back to Dashboard
           </button>
         </div>
       </div>

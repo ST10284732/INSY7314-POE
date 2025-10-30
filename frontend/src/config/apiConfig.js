@@ -5,11 +5,13 @@ const API_CONFIG = {
     const protocol = window.location.protocol;
     const isProduction = process.env.NODE_ENV === 'production';
     
-    if (isProduction) {
-      return `${protocol}//localhost:3443/v1`;
-    } else {
-      return `${protocol}//localhost:3000/v1`;
+    // Use HTTPS port 3443 for secure connections
+    if (protocol === 'https:') {
+      return 'https://localhost:3443/v1';
     }
+    
+    // Fallback to HTTP port 3000
+    return 'http://localhost:3000/v1';
   },
   
   // Get full API URL for a specific endpoint

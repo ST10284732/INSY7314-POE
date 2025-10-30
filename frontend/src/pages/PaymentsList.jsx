@@ -373,7 +373,7 @@ export default function PaymentsList() {
             className="btn-link"
             onClick={() => navigate('/dashboard')}
           >
-            ← Back to Dashboard
+            <i className="fas fa-arrow-left"></i> Back to Dashboard
           </button>
         </div>
       </div>

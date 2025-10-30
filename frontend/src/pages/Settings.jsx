@@ -1,11 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import API_CONFIG from '../config/apiConfig.js';
 import '../styles/modern-banking.css';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
+  
+  // Monthly salary state
+  const [monthlySalary, setMonthlySalary] = useState('');
+  const [salaryLoading, setSalaryLoading] = useState(false);
+  const [salaryMessage, setSalaryMessage] = useState('');
+  
+  // Balance recalculation state
+  const [recalcLoading, setRecalcLoading] = useState(false);
+  const [recalcMessage, setRecalcMessage] = useState('');
 
   // Settings state with localStorage persistence
   const [settings, setSettings] = useState(() => {
@@ -61,6 +71,69 @@ export default function Settings() {
     }));
   };
 
+  const handleSalaryUpdate = async (e) => {
+    e.preventDefault();
+    setSalaryLoading(true);
+    setSalaryMessage('');
+
+    try {
+      const res = await fetch(API_CONFIG.getURL('/account/salary'), {
+        method: 'PATCH',
+        headers: {
+          ...API_CONFIG.getHeaders(),
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          monthlySalary: parseFloat(monthlySalary)
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSalaryMessage('✓ Monthly salary updated successfully! Navigate back to dashboard and click Refresh.');
+        setMonthlySalary('');
+      } else {
+        setSalaryMessage(`✗ ${data.message || 'Failed to update salary'}`);
+      }
+    } catch (err) {
+      setSalaryMessage('✗ Failed to update salary. Please try again.');
+    } finally {
+      setSalaryLoading(false);
+    }
+  };
+
+  const handleRecalculateBalance = async () => {
+    if (!window.confirm('This will recalculate your account balance based on all transactions. Continue?')) {
+      return;
+    }
+
+    setRecalcLoading(true);
+    setRecalcMessage('');
+
+    try {
+      const res = await fetch(API_CONFIG.getURL('/account/recalculate-balance'), {
+        method: 'POST',
+        headers: {
+          ...API_CONFIG.getHeaders(),
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setRecalcMessage(`✓ Balance recalculated! Old: R${data.data.oldBalance.toFixed(2)} → New: R${data.data.newBalance.toFixed(2)}. ${data.data.transactionsUpdated} transaction(s) corrected. Please refresh your dashboard.`);
+      } else {
+        setRecalcMessage(`✗ ${data.message || 'Failed to recalculate balance'}`);
+      }
+    } catch (err) {
+      setRecalcMessage('✗ Failed to recalculate balance. Please try again.');
+    } finally {
+      setRecalcLoading(false);
+    }
+  };
+
   return (
     <div style={{ background: 'var(--bg-secondary)', minHeight: '100vh', padding: 'var(--space-4)' }}>
       <div className="container">
@@ -82,7 +155,7 @@ export default function Settings() {
               fontSize: 'var(--font-size-2xl)',
               fontWeight: 'var(--font-bold)'
             }}>
-              ⚙ Account Settings
+              <i className="fas fa-cog"></i> Account Settings
             </h1>
             <p style={{ margin: '4px 0 0 0', color: 'var(--text-primary)' }}>
               Manage your banking preferences and security options
@@ -92,7 +165,7 @@ export default function Settings() {
             onClick={() => navigate('/dashboard')}
             className="btn btn-secondary"
           >
-            ← Back to Dashboard
+            <i className="fas fa-arrow-left"></i> Back to Dashboard
           </button>
         </div>
 
@@ -102,7 +175,7 @@ export default function Settings() {
           <div className="card">
             <div className="card-header">
               <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
-                ◐ Display & Theme
+                <i className="fas fa-palette"></i> Display & Theme
               </h3>
             </div>
             <div className="card-body">
@@ -230,11 +303,122 @@ export default function Settings() {
             </div>
           </div>
 
+          {/* Financial Settings - Only for Customers */}
+          {user?.role === 'Customer' && (
+            <div className="card">
+              <div className="card-header">
+                <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
+                  <i className="fas fa-wallet"></i> Financial Settings
+                </h3>
+              </div>
+              <div className="card-body">
+                <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+                  
+                  {/* Monthly Salary */}
+                  <form onSubmit={handleSalaryUpdate} style={{
+                    padding: 'var(--space-4)',
+                    border: '1px solid var(--border-light)',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-secondary)'
+                  }}>
+                    <div style={{ marginBottom: 'var(--space-4)' }}>
+                      <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
+                        <i className="fas fa-money-bill"></i> Monthly Salary/Income
+                      </div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: 'var(--space-3)' }}>
+                      Set your expected monthly income for budgeting and financial tracking
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                        Amount (in {settings.currency})
+                      </label>
+                      <input
+                        type="number"
+                        value={monthlySalary}
+                        onChange={(e) => setMonthlySalary(e.target.value)}
+                        placeholder="e.g., 23000"
+                        min="0"
+                        step="0.01"
+                        className="form-input"
+                        style={{ width: '100%' }}
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={salaryLoading || !monthlySalary}
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {salaryLoading ? 'Updating...' : 'Update Salary'}
+                    </button>
+                  </div>
+                  
+                  {salaryMessage && (
+                    <div style={{
+                      marginTop: 'var(--space-3)',
+                      padding: 'var(--space-3)',
+                      borderRadius: 'var(--radius-md)',
+                      background: salaryMessage.startsWith('✓') ? '#d4edda' : '#f8d7da',
+                      color: salaryMessage.startsWith('✓') ? '#155724' : '#721c24',
+                      fontSize: '14px'
+                    }}>
+                      {salaryMessage}
+                    </div>
+                  )}
+                </form>
+
+                {/* Balance Recalculation */}
+                <div style={{
+                  padding: 'var(--space-4)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--bg-secondary)'
+                }}>
+                  <div style={{ marginBottom: 'var(--space-4)' }}>
+                    <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
+                      <i className="fas fa-sync-alt"></i> Recalculate Account Balance
+                    </div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: 'var(--space-3)' }}>
+                      Fix balance discrepancies by recalculating from all transaction history
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={handleRecalculateBalance}
+                    className="btn btn-secondary"
+                    disabled={recalcLoading}
+                    style={{ width: '100%' }}
+                  >
+                    {recalcLoading ? 'Recalculating...' : 'Recalculate Balance'}
+                  </button>
+                  
+                  {recalcMessage && (
+                    <div style={{
+                      marginTop: 'var(--space-3)',
+                      padding: 'var(--space-3)',
+                      borderRadius: 'var(--radius-md)',
+                      background: recalcMessage.startsWith('✓') ? '#d4edda' : '#f8d7da',
+                      color: recalcMessage.startsWith('✓') ? '#155724' : '#721c24',
+                      fontSize: '14px'
+                    }}>
+                      {recalcMessage}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
+
           {/* Security Settings */}
           <div className="card">
             <div className="card-header">
               <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
-                ⊞ Security & Privacy
+                <i className="fas fa-shield-alt"></i> Security & Privacy
               </h3>
             </div>
             <div className="card-body">
@@ -366,7 +550,7 @@ export default function Settings() {
           <div className="card">
             <div className="card-header">
               <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>
-                ◉ Notifications
+                <i className="fas fa-bell"></i> Notifications
               </h3>
             </div>
             <div className="card-body">
@@ -384,7 +568,7 @@ export default function Settings() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 'var(--font-medium)', marginBottom: '4px' }}>
-                      ◉ Push Notifications
+                      <i className="fas fa-mobile-alt"></i> Push Notifications
                     </div>
                     <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Receive real-time alerts for account activity
