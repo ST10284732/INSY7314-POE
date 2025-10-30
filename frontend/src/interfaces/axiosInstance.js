@@ -2,11 +2,12 @@
 import axios from 'axios';
 
 // Determine protocol and port based on environment
-const isProduction = process.env.NODE_ENV === 'production';
 const protocol = window.location.protocol; // Use same protocol as frontend
-const baseURL = isProduction 
-  ? `${protocol}//localhost:3443/v1` // HTTPS in production
-  : `${protocol}//localhost:3000/v1`; // HTTP in development
+
+// Use HTTPS port 3443 for secure connections, HTTP port 3000 otherwise
+const baseURL = protocol === 'https:' 
+  ? 'https://localhost:3443/v1'
+  : 'http://localhost:3000/v1';
 
 const axiosInstance = axios.create({
     // Dynamic BASE URL for HTTP/HTTPS support

@@ -153,7 +153,7 @@ export default function MFASetup() {
               fontSize: 'var(--font-size-2xl)',
               fontWeight: 'var(--font-bold)'
             }}>
-              ⊞ Multi-Factor Authentication
+              <i className="fas fa-shield-alt"></i> Multi-Factor Authentication
             </h1>
             <p style={{ margin: '4px 0 0 0', color: 'var(--text-primary)' }}>
               Secure your account with an additional layer of protection
@@ -163,7 +163,7 @@ export default function MFASetup() {
             onClick={() => navigate('/dashboard')}
             className="btn btn-secondary"
           >
-            ← Back to Dashboard
+            <i className="fas fa-arrow-left"></i> Back to Dashboard
           </button>
         </div>
 
@@ -204,7 +204,7 @@ export default function MFASetup() {
                   fontSize: '48px',
                   color: mfaStatus.mfaEnabled ? 'var(--secondary-green)' : 'var(--secondary-red)'
                 }}>
-                  {mfaStatus.mfaEnabled ? '⊞' : '⊡'}
+                  <i className={mfaStatus.mfaEnabled ? 'fas fa-shield-alt' : 'far fa-shield-alt'}></i>
                 </div>
                 <div>
                   <h3 style={{ margin: 0, color: mfaStatus.mfaEnabled ? 'var(--secondary-green)' : 'var(--secondary-red)' }}>
@@ -225,7 +225,7 @@ export default function MFASetup() {
                     onClick={() => setSetupStep('generate')}
                     className="btn btn-primary"
                   >
-                    ⊞ Enable MFA Protection
+                    <i className="fas fa-shield-alt"></i> Enable MFA Protection
                   </button>
                 ) : (
                   <button
@@ -383,7 +383,7 @@ export default function MFASetup() {
                   onClick={() => setSetupStep('generate')}
                   className="btn btn-link"
                 >
-                  ← Back to previous step
+                  <i className="fas fa-arrow-left"></i> Back to previous step
                 </button>
               </div>
             </div>
@@ -443,7 +443,7 @@ export default function MFASetup() {
                     onClick={downloadBackupCodes}
                     className="btn btn-secondary"
                   >
-                    💾 Download Backup Codes
+                    <i className="fas fa-download"></i> Download Backup Codes
                   </button>
                 </div>
               )}

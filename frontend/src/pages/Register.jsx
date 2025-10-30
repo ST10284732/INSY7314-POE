@@ -136,6 +136,11 @@ function Register() {
     <div className="page-container">
       <div className="card" style={{ maxWidth: '500px', width: '100%' }}>
         <div className="card-header text-center">
+          <div style={{ marginBottom: 'var(--space-4)' }}>
+            <Link to="/" className="btn-link" style={{ textDecoration: 'none', fontSize: '14px' }}>
+              <i className="fas fa-arrow-left"></i> Back to Home
+            </Link>
+          </div>
           <h2 style={{ margin: 0, color: 'var(--primary-blue)' }}>
             Create Your Account
           </h2>

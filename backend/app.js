@@ -10,6 +10,10 @@ const { securityMiddlewares, createAuthLimiter, createPaymentLimiter } = require
 const userRoutes = require('./routes/userRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const mfaRoutes = require('./routes/mfaRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const accountRoutes = require('./routes/accountRoutes');
+const beneficiaryRoutes = require('./routes/beneficiaryRoutes');
 
 const app = express();
 
@@ -39,6 +43,10 @@ app.get('/health', (req, res) => {
 app.use('/v1/user', userRoutes);
 app.use('/v1/payments', paymentRoutes);
 app.use('/v1/mfa', mfaRoutes);
+app.use('/v1/employee', employeeRoutes);
+app.use('/v1/admin', adminRoutes);
+app.use('/v1/account', accountRoutes);
+app.use('/v1/beneficiaries', beneficiaryRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -60,14 +68,14 @@ app.use((err, req, res, next) => {
     }
 });
 
-// 404 handler for undefined routes (commented out to avoid path-to-regexp issue)
-// app.use('*', (req, res) => {
-//     console.log(`[404] ${new Date().toISOString()} - ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
-//     res.status(404).json({
-//         success: false,
-//         message: 'API endpoint not found'
-//     });
-// });
+// 404 handler for undefined routes
+app.use((req, res) => {
+    console.log(`[404] ${new Date().toISOString()} - ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
+    res.status(404).json({
+        success: false,
+        message: 'API endpoint not found'
+    });
+});
 
 // Connect to MongoDB
 connectToMongo();

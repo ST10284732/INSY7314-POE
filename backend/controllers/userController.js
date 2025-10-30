@@ -12,6 +12,7 @@ const generateJwt = (user) => {
         userId: user._id,
         username: user.username,
         accountNumber: user.accountNumber,
+        role: user.role, // Include role for RBAC
         iat: Math.floor(Date.now() / 1000), // Issued at time
         sessionId: `${user._id}_${Date.now()}` // Unique session identifier
     };
