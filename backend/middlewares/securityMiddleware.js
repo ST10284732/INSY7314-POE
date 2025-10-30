@@ -84,7 +84,25 @@ const sanitizeInput = (req, res, next) => {
 // Enhanced CORS configuration for production security
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests from frontend during development and production
+    // In development, allow all local network origins
+    if (process.env.NODE_ENV === 'development') {
+      // Allow requests with no origin (like mobile apps, Postman) in development
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      // Allow localhost and 127.0.0.1 with any port
+      if (origin.match(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/)) {
+        return callback(null, true);
+      }
+      
+      // Allow local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+      if (origin.match(/^https?:\/\/(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(:\d+)?$/)) {
+        return callback(null, true);
+      }
+    }
+    
+    // In production, use strict whitelist
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:3001', 
@@ -96,8 +114,7 @@ const corsOptions = {
       // Add production URLs when deployed
     ];
     
-    // Allow requests with no origin (like mobile apps) in development
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
