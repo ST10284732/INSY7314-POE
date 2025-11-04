@@ -72,23 +72,23 @@ Now supports multiple user roles (Customer, Employee, Admin) for enhanced access
       - Add, edit, and delete beneficiaries for quick future transactions
    
 - **🧑‍💼 Employee Features**
-  - Employee dashboard displaying all pending customer payments
-  - Able to review, approve, or deny payments
-  - Payment history view showing all previously approved or denied transactions
-  - Search and filter functionality to locate payments easily
+  - Employee dashboard displaying all **pending customer payments**
+  - Able to review, **approve**, or **deny** payments
+  - **Payment history** view showing all previously approved or denied transactions
+  - **Search and filter** functionality to locate payments easily
  
 - **🧑‍💻 Admin Features**
-  - Admin dashboard to view all existing users and their roles
-  - Create new users (Employees, Admins)
-  - Update or delete employee accounts
+  - Admin dashboard to **view all existing users** and their roles
+  - **Create new users** (Employees, Admins)
+  - **Update or delete** employee accounts
 
 - **⚙️ Shared Features (All Roles)**
-  - Login and registration with input validation
-  - Role-based dashboard navigation, users only see pages they are authorized to access
-  - Settings page with dark mode toggle
-  - Protected routes ensuring only authenticated users access the dashboard
-  - All API calls made securely over HTTPS
-  - Modern and responsive UI for seamless user experience
+  - **Login and registration** with input validation
+  - **Role-based** dashboard navigation, users only see pages they are authorized to access
+  - **Settings page** with dark mode toggle
+  - **Protected routes** ensuring only authenticated users access the dashboard
+  - All API calls made **securely** over HTTPS
+  - Modern and responsive UI for seamless **user experience**
 
  ---
 
@@ -108,14 +108,14 @@ Now supports multiple user roles (Customer, Employee, Admin) for enhanced access
  
 - **🐳 Dockerization**
   - Docker Compose Setup
-    - Backend, frontend, and database all containerized
+    - Backend, and frontend all **containerized**
     - Simplifies deployment and ensures consistent environment configuration across systems
     - Secure communication enabled through SSL in Docker environment
    
 - **🧠 Part 2 Feedback Improvements **
   - SSL Integration
-    - In Part 2, SSL was only applied to the backend
-    - Now fully integrated with both backend and frontend for complete HTTPS coverage
+    - In Part 2, SSL was only applied to the **backend**
+    - Now fully integrated with both **backend and frontend** for complete HTTPS coverage
  
 ### 📺 Youtube Link
 Part 2:
