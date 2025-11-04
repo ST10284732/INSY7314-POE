@@ -29,7 +29,7 @@ services:
       - "3443:3443"
     environment:
       - NODE_ENV=development
-      - CONN_STRING=mongodb://mongo:27017/payment_portal
+      # Removed CONN_STRING override - will use .env file (MongoDB Atlas)
     networks:
       - payment_network
     depends_on:
