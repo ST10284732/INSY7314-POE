@@ -84,7 +84,7 @@ Now supports multiple user roles (Customer, Employee, Admin) for enhanced access
 
 - **⚙️ Shared Features (All Roles)**
   - Login and registration with input validation
-  - Role-based dashboard navigation — users only see pages they are authorized to access
+  - Role-based dashboard navigation, users only see pages they are authorized to access
   - Settings page with dark mode toggle
   - Protected routes ensuring only authenticated users access the dashboard
   - All API calls made securely over HTTPS
